@@ -1426,7 +1426,7 @@ NewTV魅力潇湘,http://39.135.7.4:6610/000000001000/1000000001000006197/index.
 NewTV明星大片,http://39.135.7.4:6610/000000001000/1000000004000019008/index.m3u8?channel-id=ystenlive&Contentid=1000000004000019008&livemode=1&stbId=3
 NewTV炫舞未来,http://39.135.7.4:6610/000000001000/1000000001000000515/index.m3u8?channel-id=ystenlive&Contentid=1000000001000000515&livemode=1&stbId=3
 
-18禁,#genre#
+18禁_888,#genre#
 Anal,http://live.redtraffic.xyz/anal.m3u8
 Anal,http://cdn.adultiptv.net/anal.m3u8
 Asian,http://live.redtraffic.xyz/asian.m3u8
