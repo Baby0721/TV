@@ -8,6 +8,9 @@ https://wwc.lanzoub.com/b0erx68gf
 本地直播接口
 http://127.0.0.1:9978/file/TVBox/Tv.txt
 
+Github地址转换
+https://cdn.jsdelivr.net/gh/Baby0721/Tv/Tv.txt
+
 饭太硬
 http://ftyyy.tk/live.txt
 http://饭太硬.ga/x/o.json			
