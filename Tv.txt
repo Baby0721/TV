@@ -1091,7 +1091,7 @@ MOMO综合,http://www.yshmzmc.top/gtjm.php?id=live1248
 韩国-EBSe,http://ebsonairios.ebs.co.kr/plus3familypc/familypc1m/playlist.m3u8
 韩国-KBS World,https://livecdn.fptplay.net/sdb/kbs_hls.smil/chunklist_b2500000.m3u8
 韩国-MTN,http://183.110.27.87/mtnlive/_definst_/720/chunklist.m3u8
-日韩频道,http://necgokr2-724.acs.wecandeo.com/ms/2528/724/index_1.m3u8
+
 日本BBC World News[640*360],http://103.199.161.254/Content/bbcworld/Live/Channel(BBCworld)/index.m3u8
 日本·NHK国际频道,https://nhkwlive-xjp.akamaized.net/hls/live/2003458/nhkwlive-xjp-en/index_1M.m3u8
 日テレ,http://203.162.235.41:16905
