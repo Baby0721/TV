@@ -789,7 +789,6 @@ CETV-早期教育,http://ct.whosayssowhat.top:4022/udp/239.77.0.180:5146
 耀才財經,http://202.69.67.66:443/webcast/bshdlive-pc/playlist.m3u8
 点掌财经,http://cclive2.aniu.tv/live/anzb.m3u8
 民视新闻,http://38.64.72.148:80/hls/modn/list/4012/chunklist0.m3u8
-东森美洲,http://38.64.72.148:80/hls/modn/list/2026/chunklist0.m3u8
 大愛一臺,https://pulltv1.wanfudaluye.com/live/tv1.m3u8
 大愛二臺,https://pulltv2.wanfudaluye.com/live/tv2.m3u8
 GoodTV 真情部落,https://live-350k.streamingfast.net/hls-live/goodtv/_definst_/liveevent/live-ch3-2.m3u8
