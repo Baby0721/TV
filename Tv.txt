@@ -802,17 +802,17 @@ GoodTV 爱旅行台,https://live-350k.streamingfast.net/hls-live/goodtv/_definst
 耀才财经,https://v3.mediacast.hk/webcast/bshdlive-pc/playlist.m3u8
 点掌财经,http://cclive2.aniu.tv/live/anzb.m3u8
 香港衛視文旅,https://myun-hw-s3.myun.tv/melj80jz/lxx27bol/1551285536499984128.m3u8
-时尚频道,http://juyunlive.juyun.tv/live/24950198.m3u8
+
 HBO2台,http://hpull.kktv8.com/livekktv/128600025/playlist.m3u8
 亚洲新闻,http://d2e1asnsl7br7b.cloudfront.net/7782e205e72f43aeb4a48ec97f66ebbe/index_4.m3u8
-台视,http://23.237.10.66:16344
+
 台视,http://2022.stream-link.org/playlist/ttv
 台视,http://2023.stream-link.org/playlist/ttv
 台视,http://107.151.203.111:2209/135/us50.php?id=tsk
 
 华视,http://2023.stream-link.org/playlist/cts_zy
 
-民视,http://23.237.10.66:16334
+
 民视,http://107.151.203.111:2209/135/us50.php?id=msk
 
 中视新闻,http://2023.stream-link.org/playlist/ctv_news
@@ -825,7 +825,7 @@ HBO2台,http://hpull.kktv8.com/livekktv/128600025/playlist.m3u8
 民视新闻,http://123.51.230.108:18663/.m3u8
 
 民视新闻,http://2023.stream-link.org/playlist/ftv_news
-民视新闻,http://38.64.72.148/hls/modn/list/4012/playlist.m3u8
+
 民视新闻,https://pull-l3-cny.douyincdn.com/live/304b8e04a437299311112b7f4902c9dd.m3u8
 华视新闻,http://2023.stream-link.org/playlist/cts_news
 华视新闻,https://9000-9a3ec068825e40f7a53c4fc9d7582565.patr.cloud/jmsytb.m3u8?c=7
