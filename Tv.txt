@@ -886,7 +886,6 @@ TVBS亚洲台,http://pull-l3-cny.douyincdn.com/third/stream-9f6ea8b662a55d5fa562
 韩国-EBS1,http://ebsonairios.ebs.co.kr/groundwavefamilypc/familypc1m/playlist.m3u8
 韩国-EBS2,http://ebsonairios.ebs.co.kr/ebs2familypc/familypc1m/playlist.m3u8
 韩国-EBSe,http://ebsonairios.ebs.co.kr/plus3familypc/familypc1m/playlist.m3u8
-韩国-KBS World,https://livecdn.fptplay.net/sdb/kbs_hls.smil/chunklist_b2500000.m3u8
 韩国-MTN,http://183.110.27.87/mtnlive/_definst_/720/chunklist.m3u8
 
 日本BBC World News[640*360],http://103.199.161.254/Content/bbcworld/Live/Channel(BBCworld)/index.m3u8
