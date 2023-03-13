@@ -1,22 +1,22 @@
 央视直播,#genre#
 
-CCTV-1HD,http://live.cooltv.top/tv/aishang.php?id=cctv1hd
-CCTV-2HD,http://live.cooltv.top/tv/aishang.php?id=cctv2hd
-CCTV-3HD,http://live.cooltv.top/tv/aishang.php?id=cctv3hd
-CCTV-4HD,http://live.cooltv.top/tv/aishang.php?id=cctv4hd
-CCTV-5HD,http://live.cooltv.top/tv/aishang.php?id=cctv5hd
-CCTV-6HD,http://live.cooltv.top/tv/aishang.php?id=cctv6hd
-CCTV-7HD,http://live.cooltv.top/tv/aishang.php?id=cctv7hd
-CCTV-8HD,http://live.cooltv.top/tv/aishang.php?id=cctv8hd
-CCTV-9HD,http://live.cooltv.top/tv/aishang.php?id=cctv9hd
-CCTV-10HD,http://live.cooltv.top/tv/aishang.php?id=cctv10hd
-CCTV-11HD,http://live.cooltv.top/tv/aishang.php?id=cctv11hd
-CCTV-12HD,http://live.cooltv.top/tv/aishang.php?id=cctv12hd
-CCTV-13HD,http://live.cooltv.top/tv/aishang.php?id=cctv13hd
-CCTV-14HD,http://live.cooltv.top/tv/aishang.php?id=cctv14hd
-CCTV-15HD,http://live.cooltv.top/tv/aishang.php?id=cctv15hd
-CCTV-16HD,http://live.cooltv.top/tv/aishang.php?id=cctv16hd
-CCTV-17HD,http://live.cooltv.top/tv/aishang.php?id=cctv17hd
+CCTV-1,http://live.cooltv.top/tv/aishang.php?id=cctv1hd
+CCTV-2,http://live.cooltv.top/tv/aishang.php?id=cctv2hd
+CCTV-3,http://live.cooltv.top/tv/aishang.php?id=cctv3hd
+CCTV-4,http://live.cooltv.top/tv/aishang.php?id=cctv4hd
+CCTV-5,http://live.cooltv.top/tv/aishang.php?id=cctv5hd
+CCTV-6,http://live.cooltv.top/tv/aishang.php?id=cctv6hd
+CCTV-7,http://live.cooltv.top/tv/aishang.php?id=cctv7hd
+CCTV-8,http://live.cooltv.top/tv/aishang.php?id=cctv8hd
+CCTV-9,http://live.cooltv.top/tv/aishang.php?id=cctv9hd
+CCTV-10,http://live.cooltv.top/tv/aishang.php?id=cctv10hd
+CCTV-11,http://live.cooltv.top/tv/aishang.php?id=cctv11hd
+CCTV-12,http://live.cooltv.top/tv/aishang.php?id=cctv12hd
+CCTV-13,http://live.cooltv.top/tv/aishang.php?id=cctv13hd
+CCTV-14,http://live.cooltv.top/tv/aishang.php?id=cctv14hd
+CCTV-15,http://live.cooltv.top/tv/aishang.php?id=cctv15hd
+CCTV-16,http://live.cooltv.top/tv/aishang.php?id=cctv16hd
+CCTV-17,http://live.cooltv.top/tv/aishang.php?id=cctv17hd
 
 
 CCTV1,http://113.62.253.22/live.aishang.ctlcdn.com/00000110240127_1/playlist.m3u8?CONTENTID=00000110240127_1&AUTHINFO=FABqh274XDn8fkurD5614t%2B1RvYajgx%2Ba3PxUJe1SMO4OjrtFitM6ZQbSJEFffaD35hOAhZdTXOrK0W8QvBRom%2BXaXZYzB%2FQfYjeYzGgKhP%2Fdo%2BXpr4quVxlkA%2BubKvbU1XwJFRgrbX%2BnTs60JauQUrav8kLj%2FPH8LxkDFpzvkq75UfeY%2FVNDZygRZLw4j%2BXtwhj%2FIuXf1hJAU0X%2BheT7g%3D%3D&USERTOKEN=eHKuwve%2F35NVIR5qsO5XsuB0O2BhR0KR
