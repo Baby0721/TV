@@ -577,7 +577,7 @@ CHC高清电影,http://ct.whosayssowhat.top:4022/udp/239.77.0.27:5146
 CETV-1,http://ct.whosayssowhat.top:4022/udp/239.77.1.222:5146
 CETV-早期教育,http://ct.whosayssowhat.top:4022/udp/239.77.0.180:5146
 
-IPV6专区,#genre#
+IPV6专线,#genre#
 CCTV-1,http://[2409:8087:3869:8021:1001::e5]:6610/PLTV/88888910/224/3221225642/index.m3u8
 CCTV-2,http://[2409:8087:3869:8021:1001::e5]:6610/PLTV/88888910/224/3221225643/index.m3u8
 CCTV-3,http://[2409:8087:3869:8021:1001::e5]:6610/PLTV/88888910/224/3221225634/index.m3u8
