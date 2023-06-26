@@ -289,7 +289,7 @@ CHC动作电影,http://dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226465/in
 延边-1,http://live.ybtvyun.com/video/s10016-af95004b6d1a/index.m3u8?zjild
 延边-2,http://live.ybtvyun.com/video/s10006-04819ee234a7/index.m3u8?zjild
 延边-2,http://live.cloud.yanews.cn/video/s10001-YATV-2/index.m3u8?zjild
-长春综合,http://play-bj.quklive.com/live/1609216214058927.m3u8?zjild
+
 延边朝鲜语综合,http://live.ybtvyun.com/video/s10006-b571c289a478/index.m3u8?zjild
 延边朝鲜语综合,http://live.ybtvyun.com/video/s10016-19a16c47eb99/index.m3u8?zjild
 延边汉语综合,http://live.ybtvyun.com/video/s10006-04819ee234a7/index.m3u8?zjild
