@@ -184,8 +184,8 @@ CCTV14,https://iptv.luas.edu.cn/liverespath/0e0973e58d4835f4b872548164462930003f
 CCTV15,https://iptv.luas.edu.cn/liverespath/59c02d176e7c3b05a62a9bb42be1ca2a92df2e1c/aefabb5259-0-0-65038e86b205c58b18c0c661afd99fae/index.m3u8
 
 CGTN NEWS,https://iptv.luas.edu.cn/liverespath/42085633aae0f63aebc607259e815b0088ab8017/9ea5495673-0-0-664084d22e04048916ba8fd8dcb06ed2/index.m3u8
-CETV1,https://iptv.luas.edu.cn/liverespath/85558d86e1bcab9405a28515bc414ba3676ecbde/1311cb3ce5-0-0-6118de28157ec206af2454e416c9a90e/index.m3u8
 
+CETV1,https://iptv.luas.edu.cn/liverespath/85558d86e1bcab9405a28515bc414ba3676ecbde/1311cb3ce5-0-0-6118de28157ec206af2454e416c9a90e/index.m3u8
 CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015b87/2f665915b0-0-0-08b800b5bdd1f6d3f61a673c5eb1afec/index.m3u8
 
 
@@ -278,7 +278,7 @@ CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015
 甘肃卫视,http://cfss.cc/api/ysp/gsws.m3u8
 青海卫视,http://cfss.cc/api/ysp/qhws.m3u8
 宁夏卫视,http://cfss.cc/api/ysp/nxws.m3u8
-吉林延边,http://cfss.cc/api/ysp/ybws.m3u8
+
 
 
 浙江卫视,http://hw-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
