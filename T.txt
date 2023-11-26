@@ -184,12 +184,10 @@ CCTV14,https://iptv.luas.edu.cn/liverespath/0e0973e58d4835f4b872548164462930003f
 CCTV15,https://iptv.luas.edu.cn/liverespath/59c02d176e7c3b05a62a9bb42be1ca2a92df2e1c/aefabb5259-0-0-65038e86b205c58b18c0c661afd99fae/index.m3u8
 
 CGTN NEWS,https://iptv.luas.edu.cn/liverespath/42085633aae0f63aebc607259e815b0088ab8017/9ea5495673-0-0-664084d22e04048916ba8fd8dcb06ed2/index.m3u8
-
 CETV1,https://iptv.luas.edu.cn/liverespath/85558d86e1bcab9405a28515bc414ba3676ecbde/1311cb3ce5-0-0-6118de28157ec206af2454e416c9a90e/index.m3u8
 CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015b87/2f665915b0-0-0-08b800b5bdd1f6d3f61a673c5eb1afec/index.m3u8
 
-
-
+CCTV13,https://live-play.cctvnews.cctv.com/cctv/merge_cctv13.m3u8
 
 地方卫视,#genre#
 
@@ -198,6 +196,8 @@ CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015
 香港卫视,http://zhibo.hkstv.tv/livestream/mutfysrq/playlist.m3u8
 香港卫视,http://zhibo.hkstv.tv:80/livestream/mutfysrq.flv
 
+凤凰中文,http://dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226547/index.m3u8
+凤凰资讯,http://dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226546/index.m3u8
 
 北京卫视,http://live.aishang.ctlcdn.com/00000110240129_1/playlist.m3u8?CONTENTID=00000110240129_1&AUTHINFO=FABqh274XDn8fkurD5614t%2B1RvYajgx%2Ba3PxUJe1SMO4OjrtFitM6ZQbSJEFffaD35hOAhZdTXOrK0W8QvBRom%2BXaXZYzB%2FQfYjeYzGgKhP%2Fdo%2BXpr4quVxlkA%2BubKvbU1XwJFRgrbX%2BnTs60JauQUrav8kLj%2FPH8LxkDFpzvkq75UfeY%2FVNDZygRZLw4j%2BXtwhj%2FIuXf1hJAU0X%2BheT7g%3D%3D&USERTOKEN=eHKuwve%2F35NVIR5qsO5XsuB0O2BhR0KR
 东方卫视,http://live.aishang.ctlcdn.com/00000110240242_1/playlist.m3u8?CONTENTID=00000110240242_1&AUTHINFO=FABqh274XDn8fkurD5614t%2B1RvYajgx%2Ba3PxUJe1SMO4OjrtFitM6ZQbSJEFffaD35hOAhZdTXOrK0W8QvBRom%2BXaXZYzB%2FQfYjeYzGgKhP%2Fdo%2BXpr4quVxlkA%2BubKvbU1XwJFRgrbX%2BnTs60JauQUrav8kLj%2FPH8LxkDFpzvkq75UfeY%2FVNDZygRZLw4j%2BXtwhj%2FIuXf1hJAU0X%2BheT7g%3D%3D&USERTOKEN=eHKuwve%2F35NVIR5qsO5XsuB0O2BhR0KR
@@ -280,7 +280,6 @@ CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015
 宁夏卫视,http://cfss.cc/api/ysp/nxws.m3u8
 
 
-
 浙江卫视,http://hw-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
 
 江苏卫视,http://39.134.24.166/dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221226200/index.m3u8?
@@ -356,7 +355,99 @@ CETV3,https://iptv.luas.edu.cn/liverespath/3a13f3b554cd6c3764599392bb43650e4e015
 内蒙古卫视,https://iptv.luas.edu.cn/liverespath/5a601b122fcaacb6480b65cb74ee8f76347020d6/aae176985f-0-0-f061a231739c0eef9eedd7098db170e9/index.m3u8
 
 
-吉林,#genre#
+吉林专区,#genre#
+
+CCTV1,http://jltpc.x3322.net:9901/tsfile/live/0001_1.m3u8?key=txiptv
+CCTV2,http://jltpc.x3322.net:9901/tsfile/live/0002_1.m3u8?key=txiptv
+CCTV3,http://jltpc.x3322.net:9901/tsfile/live/0003_1.m3u8?key=txiptv
+CCTV4,http://jltpc.x3322.net:9901/tsfile/live/0004_1.m3u8?key=txiptv
+CCTV5,http://jltpc.x3322.net:9901/tsfile/live/0005_1.m3u8?key=txiptv
+CCTV5+,http://jltpc.x3322.net:9901/tsfile/live/0016_1.m3u8?key=txiptv
+CCTV6,http://jltpc.x3322.net:9901/tsfile/live/0006_1.m3u8?key=txiptv
+CCTV7,http://jltpc.x3322.net:9901/tsfile/live/0007_1.m3u8?key=txiptv
+CCTV8,http://jltpc.x3322.net:9901/tsfile/live/0008_1.m3u8?key=txiptv
+CCTV9,http://jltpc.x3322.net:9901/tsfile/live/0009_1.m3u8?key=txiptv
+CCTV10,http://jltpc.x3322.net:9901/tsfile/live/0010_1.m3u8?key=txiptv
+CCTV11,http://jltpc.x3322.net:9901/tsfile/live/0011_1.m3u8?key=txiptv
+CCTV12,http://jltpc.x3322.net:9901/tsfile/live/0012_1.m3u8?key=txiptv
+CCTV13,http://jltpc.x3322.net:9901/tsfile/live/0013_1.m3u8?key=txiptv
+CCTV14,http://jltpc.x3322.net:9901/tsfile/live/0014_1.m3u8?key=txiptv
+CCTV15,http://jltpc.x3322.net:9901/tsfile/live/0015_1.m3u8?key=txiptv
+CCTV17,http://jltpc.x3322.net:9901/tsfile/live/1042_1.m3u8?key=txiptv
+
+CETV1,http://jltpc.x3322.net:9901/tsfile/live/1039_1.m3u8?key=txiptv
+CETV2,http://jltpc.x3322.net:9901/tsfile/live/1009_1.m3u8?key=txiptv
+
+风云音乐,http://jltpc.x3322.net:9901/tsfile/live/1032_1.m3u8?key=txiptv
+风云剧场,http://jltpc.x3322.net:9901/tsfile/live/1034_1.m3u8?key=txiptv
+怀旧剧场,http://jltpc.x3322.net:9901/tsfile/live/1026_1.m3u8?key=txiptv
+风云足球,http://jltpc.x3322.net:9901/tsfile/live/1033_1.m3u8?key=txiptv
+央视台球,http://jltpc.x3322.net:9901/tsfile/live/1035_1.m3u8?key=txiptv
+世界地理,http://jltpc.x3322.net:9901/tsfile/live/1029_1.m3u8?key=txiptv
+兵器科技,http://jltpc.x3322.net:9901/tsfile/live/1030_1.m3u8?key=txiptv
+电视指南,http://jltpc.x3322.net:9901/tsfile/live/1027_1.m3u8?key=txiptv
+高尔夫,http://jltpc.x3322.net:9901/tsfile/live/1037_1.m3u8?key=txiptv
+央视文化精品,http://jltpc.x3322.net:9901/tsfile/live/1028_1.m3u8?key=txiptv
+
+CHC家庭影院,http://jltpc.x3322.net:9901/tsfile/live/1016_1.m3u8?key=txiptv
+CHC高清电影,http://jltpc.x3322.net:9901/tsfile/live/1015_1.m3u8?key=txiptv
+
+北京卫视,http://jltpc.x3322.net:9901/tsfile/live/0122_1.m3u8?key=txiptv
+天津卫视,http://jltpc.x3322.net:9901/tsfile/live/0135_1.m3u8?key=txiptv
+河北卫视,http://jltpc.x3322.net:9901/tsfile/live/0117_1.m3u8?key=txiptv
+山西卫视,http://jltpc.x3322.net:9901/tsfile/live/0118_1.m3u8?key=txiptv
+辽宁卫视,http://jltpc.x3322.net:9901/tsfile/live/0121_1.m3u8?key=txiptv
+吉林卫视,http://jltpc.x3322.net:9901/tsfile/live/0116_1.m3u8?key=txiptv
+黑龙江卫视,http://jltpc.x3322.net:9901/tsfile/live/0143_1.m3u8?key=txiptv
+东方卫视,http://jltpc.x3322.net:9901/tsfile/live/0107_1.m3u8?key=txiptv
+深圳卫视,http://jltpc.x3322.net:9901/tsfile/live/0126_1.m3u8?key=txiptv
+江苏卫视,http://jltpc.x3322.net:9901/tsfile/live/0127_1.m3u8?key=txiptv
+浙江卫视,http://jltpc.x3322.net:9901/tsfile/live/0124_1.m3u8?key=txiptv
+安徽卫视,http://jltpc.x3322.net:9901/tsfile/live/0130_1.m3u8?key=txiptv
+江西卫视,http://jltpc.x3322.net:9901/tsfile/live/0138_1.m3u8?key=txiptv
+山东卫视,http://jltpc.x3322.net:9901/tsfile/live/0131_1.m3u8?key=txiptv
+河南卫视,http://jltpc.x3322.net:9901/tsfile/live/0139_1.m3u8?key=txiptv
+湖北卫视,http://jltpc.x3322.net:9901/tsfile/live/0132_1.m3u8?key=txiptv
+湖南卫视,http://jltpc.x3322.net:9901/tsfile/live/0117_2.m3u8?key=txiptv
+广东卫视,http://jltpc.x3322.net:9901/tsfile/live/0125_1.m3u8?key=txiptv
+广西卫视,http://jltpc.x3322.net:9901/tsfile/live/0119_1.m3u8?key=txiptv
+重庆卫视,http://jltpc.x3322.net:9901/tsfile/live/0142_2.m3u8?key=txiptv
+四川卫视,http://jltpc.x3322.net:9901/tsfile/live/0123_1.m3u8?key=txiptv
+贵州卫视,http://jltpc.x3322.net:9901/tsfile/live/0120_1.m3u8?key=txiptv
+云南卫视,http://jltpc.x3322.net:9901/tsfile/live/0119_2.m3u8?key=txiptv
+陕西卫视,http://jltpc.x3322.net:9901/tsfile/live/0136_1.m3u8?key=txiptv
+东南卫视,http://jltpc.x3322.net:9901/tsfile/live/0137_1.m3u8?key=txiptv
+甘肃卫视,http://jltpc.x3322.net:9901/tsfile/live/0141_1.m3u8?key=txiptv
+青海卫视,http://jltpc.x3322.net:9901/tsfile/live/0140_1.m3u8?key=txiptv
+宁夏卫视,http://jltpc.x3322.net:9901/tsfile/live/0112_1.m3u8?key=txiptv
+新疆卫视,http://jltpc.x3322.net:9901/tsfile/live/0110_1.m3u8?key=txiptv
+西藏卫视,http://jltpc.x3322.net:9901/tsfile/live/0111_1.m3u8?key=txiptv
+海南卫视,http://jltpc.x3322.net:9901/tsfile/live/0114_1.m3u8?key=txiptv
+兵团卫视,http://jltpc.x3322.net:9901/tsfile/live/0115_1.m3u8?key=txiptv
+内蒙古卫视,http://jltpc.x3322.net:9901/tsfile/live/0109_1.m3u8?key=txiptv
+延边卫视,http://jltpc.x3322.net:9901/tsfile/live/1011_1.m3u8?key=txiptv
+
+吉林公共,http://jltpc.x3322.net:9901/tsfile/live/1001_1.m3u8?key=txiptv
+吉林都市,http://jltpc.x3322.net:9901/tsfile/live/1002_1.m3u8?key=txiptv
+吉林综艺,http://jltpc.x3322.net:9901/tsfile/live/1003_1.m3u8?key=txiptv
+吉林影视,http://jltpc.x3322.net:9901/tsfile/live/1006_1.m3u8?key=txiptv
+吉林生活,http://jltpc.x3322.net:9901/tsfile/live/1007_1.m3u8?key=txiptv
+吉林乡村,http://jltpc.x3322.net:9901/tsfile/live/1008_1.m3u8?key=txiptv
+
+长影频道,http://jltpc.x3322.net:9901/tsfile/live/1010_1.m3u8?key=txiptv
+第一剧场,http://jltpc.x3322.net:9901/tsfile/live/1025_1.m3u8?key=txiptv
+游戏风云,http://jltpc.x3322.net:9901/tsfile/live/1019_1.m3u8?key=txiptv
+动漫秀场,http://jltpc.x3322.net:9901/tsfile/live/1020_1.m3u8?key=txiptv
+生活时尚,http://jltpc.x3322.net:9901/tsfile/live/1021_1.m3u8?key=txiptv
+金色学堂,http://jltpc.x3322.net:9901/tsfile/live/1023_1.m3u8?key=txiptv
+法治天地,http://jltpc.x3322.net:9901/tsfile/live/1024_1.m3u8?key=txiptv
+中国交通,http://jltpc.x3322.net:9901/tsfile/live/1038_1.m3u8?key=txiptv
+女性时尚,http://jltpc.x3322.net:9901/tsfile/live/1031_1.m3u8?key=txiptv
+都市时尚,http://jltpc.x3322.net:9901/tsfile/live/1005_1.m3u8?key=txiptv
+金鹰纪实,http://jltpc.x3322.net:9901/tsfile/live/1041_1.m3u8?key=txiptv
+
+
+
 延边卫视,http://live.ybtvyun.com/video/s10016-6f0dfd97912f/index.m3u8?zjild
 延边卫视,http://live.ybtvyun.com/video/s10006-44f040627ca1/index.m3u8?zjild
 吉林都市,http://stream1.jlntv.cn/dspd/sd/live.m3u8?zjild
@@ -438,7 +529,9 @@ CRI NEWS Plus AM846,http://sk.cri.cn/am846.m3u8
 中央英语曼听,http://sk.cri.cn/915.m3u8
 中央海峡飞虹,http://sk.cri.cn/hxfh.m3u8
 
+
 👙XoXo👙_888,#genre#
+
 Anal,http://live.redtraffic.xyz/anal.m3u8
 Anal,http://cdn.adultiptv.net/anal.m3u8
 Asian,http://live.redtraffic.xyz/asian.m3u8
