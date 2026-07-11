@@ -2,7 +2,7 @@ name: Auto Sync IPTV with Email
 
 on:
   schedule:
-    # UTC 0点、12点，12小时运行一次
+    # UTC 0点、12点，12小时运行一次。
     - cron: '0 0,12 * * *'
   workflow_dispatch:
 
