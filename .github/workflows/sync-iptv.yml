@@ -22,32 +22,29 @@ jobs:
             echo "old_hash=$OLD_HASH" >> $GITHUB_OUTPUT
           else
             echo "old_hash=none" >> $GITHUB_OUTPUT
+            echo "旧版iptv-fe.m3u不存在，后续将首次生成文件"
           fi
 
       - name: Download IPTV sources
         id: download
         run: |
-          # 镜像加速下载源
-          curl -s -L --connect-timeout 10 --retry 3 --retry-delay 2 -o migu.m3u "https://mirror.ghproxy.com/https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u"
+          echo "开始拉取远程播放源"
+          curl -v -s -L --connect-timeout 15 --retry 4 --retry-delay 3 -o migu.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u"
           if [ ! -s migu.m3u ]; then
-            echo "::error::migu源下载失败"
+            echo "::error::migu源下载失败，网络连通异常"
             exit 1
           fi
 
-          curl -s -L --connect-timeout 10 --retry 3 --retry-delay 2 -o cctv_raw.m3u "https://mirror.ghproxy.com/https://raw.githubusercontent.com/ioptu/migu_video/main/cctv.migu.m3u"
+          curl -v -s -L --connect-timeout 15 --retry 4 --retry-delay 3 -o cctv_raw.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/cctv.migu.m3u"
           if [ ! -s cctv_raw.m3u ]; then
-            echo "::error::cctv源下载失败"
+            echo "::error::cctv源下载失败，网络连通异常"
             exit 1
           fi
+          echo "两个远程源全部下载完毕"
 
-          # 修改央视分组，无bak备份
           sed -i 's/\(tvg-logo="[^"]*"\)/\1,group-title="央视专版",/' cctv_raw.m3u
-
-          # 合并m3u文件
           echo "#EXTM3U" > new-iptv.m3u
-          # 去除migu头部重复标识
           tail -n +2 migu.m3u >> new-iptv.m3u
-          # 追加央视源
           cat cctv_raw.m3u >> new-iptv.m3u
 
           NEW_HASH=$(sha256sum new-iptv.m3u | awk '{print $1}')
@@ -59,6 +56,7 @@ jobs:
         run: |
           OLD_HASH=${{ steps.hash_check.outputs.old_hash }}
           NEW_HASH=${{ steps.download.outputs.new_hash }}
+          echo "旧哈希：$OLD_HASH  新哈希：$NEW_HASH"
           if [ "$OLD_HASH" = "$NEW_HASH" ]; then
             echo "changed=false" >> $GITHUB_OUTPUT
           else
@@ -77,5 +75,4 @@ jobs:
 
       - name: No change skip
         if: steps.compare.outputs.changed == 'false'
-        run: echo "源内容无更新，跳过提交"
-        
+        run: echo "源内容没有改动，跳过代码提交操作"
