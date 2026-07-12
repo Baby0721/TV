@@ -1,4 +1,4 @@
-name: Auto Sync IPTV with Email
+name: Auto Sync IPTV
 on:
   schedule:
     - cron: '0 0,12 * * *'
@@ -96,7 +96,7 @@ jobs:
         id: compare
         run: |
           OLD_HASH=${{ steps.hash_check.outputs.old_hash }}
-          NEW_HASH=${{ steps.download.outputs.new_hash }}
+          NEW_HASH=${{ steps.hash_check.outputs.new_hash }}
           echo "旧哈希：$OLD_HASH  新哈希：$NEW_HASH"
           [ "$OLD_HASH" != "$NEW_HASH" ] && echo "changed=true" >> $GITHUB_OUTPUT || echo "changed=false" >> $GITHUB_OUTPUT
 
@@ -107,7 +107,7 @@ jobs:
           git config --global user.name "Actions Bot"
           git config --global user.email "actions@github.com"
           git add iptv.txt
-          git commit -m "Auto update IPTV 分区独立不合并 无去重" $(date -u '+%Y-%m-%d %H:%M')
+          git commit -m "Auto update IPTV 分区独立不合并 无去重 $(date -u '+%Y-%m-%d %H:%M')"
           git push origin main
           echo "更新完成：独立央视专区 + 咪咕内分央视频道/卫视/其他频道，不去重"
 
