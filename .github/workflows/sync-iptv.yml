@@ -29,7 +29,7 @@ jobs:
         id: download
         run: |
           echo "开始拉取远程播放源"
-          # 下载源文件，强化网络容错
+          # 下载源文件，强化网络容错，移除-v精简日志
           curl -s -L --connect-timeout 20 --retry 5 --retry-delay 5 -o migu.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u"
           if [ ! -s migu.m3u ]; then
             echo "::error::migu源下载失败"
@@ -46,23 +46,33 @@ jobs:
           # 处理央视源分组标签
           sed -i 's/\(tvg-logo="[^"]*"\)/\1,group-title="央视专版",/' cctv_raw.m3u
 
-          # 解析频道内容、去重
-          awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' cctv_raw.m3u | sort -t ',' -k2 -u > cctv_list.tmp
-          awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' migu.m3u | sort -t ',' -k2 -u > migu_list.tmp
+          # 解析频道内容、去重、过滤空行
+          awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' cctv_raw.m3u \
+            | grep -v '^$' | sort -t ',' -k2 -u > cctv_list.tmp
+          awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' migu.m3u \
+            | grep -v '^$' | sort -t ',' -k2 -u > migu_list.tmp
 
-          # 精准拆分卫视/影视分组
-          grep -E "卫视|北京|上海|广东|湖南|浙江|江苏|安徽|山东|四川|重庆|湖北|河南|河北|福建|江西|广西|云南|贵州|辽宁|吉林|黑龙江|山西|陕西|甘肃|宁夏|青海|新疆|内蒙古|天津|海南" migu_list.tmp > tv_list.tmp
-          grep -v -E "卫视|北京|上海|广东|湖南|浙江|江苏|安徽|山东|四川|重庆|湖北|河南|河北|福建|江西|广西|云南|贵州|辽宁|吉林|黑龙江|山西|陕西|甘肃|宁夏|青海|新疆|内蒙古|天津|海南" migu_list.tmp > movie_list.tmp
+          # 卫视匹配关键词
+          TV_KEY="卫视|北京|上海|广东|湖南|浙江|江苏|安徽|山东|四川|重庆|湖北|河南|河北|福建|江西|广西|云南|贵州|辽宁|吉林|黑龙江|山西|陕西|甘肃|宁夏|青海|新疆|内蒙古|天津|海南"
+          grep -E "$TV_KEY" migu_list.tmp | grep -v '^$' > tv_list.tmp
+          grep -v -E "$TV_KEY" migu_list.tmp | grep -v '^$' > movie_list.tmp
 
-          # 标准分组排版（修复换行BUG，格式规范适配所有播放器）
-          echo "# 央视专版频道" > new-iptv.txt
-          cat cctv_list.tmp >> new-iptv.txt
+          # 组装文件，自动判断分组是否有内容，无内容则不输出标题
+          > new-iptv.txt
+          if [ -s cctv_list.tmp ]; then
+            echo "# 央视专版频道" >> new-iptv.txt
+            cat cctv_list.tmp >> new-iptv.txt
+          fi
 
-          echo -e "\n# 卫视频道" >> new-iptv.txt
-          cat tv_list.tmp >> new-iptv.txt
+          if [ -s tv_list.tmp ]; then
+            echo -e "\n# 卫视频道" >> new-iptv.txt
+            cat tv_list.tmp >> new-iptv.txt
+          fi
 
-          echo -e "\n# 咪咕影视频道" >> new-iptv.txt
-          cat movie_list.tmp >> new-iptv.txt
+          if [ -s movie_list.tmp ]; then
+            echo -e "\n# 咪咕影视频道" >> new-iptv.txt
+            cat movie_list.tmp >> new-iptv.txt
+          fi
 
           # 文件有效性校验
           if [ ! -s new-iptv.txt ]; then
