@@ -1,4 +1,4 @@
-name: Auto Sync IPTV with Email
+name: Auto Sync IPTV
 on:
   schedule:
     - cron: '0 0,12 * * *'
