@@ -29,12 +29,13 @@ jobs:
         id: download
         run: |
           echo "开始拉取远程播放源"
+          # 第一个源：咪咕
           curl -s -L --connect-timeout 20 --retry 5 --retry-delay 5 -o migu.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u"
           if [ ! -s migu.m3u ]; then
             echo "::error::migu源下载失败"
             exit 1
           fi
-
+          # 第二个源：独立CCTV源
           curl -s -L --connect-timeout 20 --retry 5 --retry-delay 5 -o cctv_raw.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/cctv.migu.m3u"
           if [ ! -s cctv_raw.m3u ]; then
             echo "::error::cctv源下载失败"
@@ -42,44 +43,44 @@ jobs:
           fi
           echo "两个远程源全部下载完毕"
 
-          sed -i 's/\(tvg-logo="[^"]*"\)/\1,group-title="央视专版",/' cctv_raw.m3u
-
-          # 1. 单独解析外部央视源
+          # 处理第二个源：全部 = 央视专区频道
           awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' cctv_raw.m3u \
-            | grep -v '^$' > cctv_ext.tmp
+            | grep -v '^$' | grep -v '^,' > cctv_zone.tmp
 
-          # 2. 解析全部咪咕源原始数据
+          # 解析咪咕全量
           awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' migu.m3u \
-            | grep -v '^$' > migu_all.tmp
+            | grep -v '^$' | grep -v '^,' > migu_all.tmp
 
-          # 从咪咕中分离自带CCTV频道，合并进央视组
-          grep -i "CCTV\|央视" migu_all.tmp > cctv_migu.tmp
-          cat cctv_ext.tmp cctv_migu.tmp | sort -t ',' -k1 -u > cctv_list.tmp
-
-          # 卫视统一关键词，仅匹配卫视，避免地名误分类
+          # migu 拆分三组
           TV_KEY="卫视"
-          grep -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" | sort -t ',' -k1 -u > tv_list.tmp
+          grep -i "CCTV\|央视" migu_all.tmp > migu_cctv.tmp
+          grep -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" > migu_tv.tmp
+          grep -v -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" > migu_other.tmp
 
-          # 剩余全部归咪咕影视
-          grep -v -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" | sort -t ',' -k1 -u > movie_list.tmp
-
-          # 固定顺序输出：央视 → 卫视 → 咪咕影视，无内容不打印标题
+          # 组装文件，固定顺序
           > new-iptv.txt
-          if [ -s cctv_list.tmp ]; then
-            echo "# 央视专版频道" >> new-iptv.txt
-            cat cctv_list.tmp >> new-iptv.txt
+          # 1. 央视专区频道（外部cctv_raw源）
+          if [ -s cctv_zone.tmp ]; then
+            echo "# 央视专区频道" >> new-iptv.txt
+            cat cctv_zone.tmp >> new-iptv.txt
           fi
-
-          if [ -s tv_list.tmp ]; then
+          # 2. 央视频道（migu内CCTV）
+          if [ -s migu_cctv.tmp ]; then
+            echo -e "\n# 央视频道" >> new-iptv.txt
+            cat migu_cctv.tmp >> new-iptv.txt
+          fi
+          # 3. 卫视频道
+          if [ -s migu_tv.tmp ]; then
             echo -e "\n# 卫视频道" >> new-iptv.txt
-            cat tv_list.tmp >> new-iptv.txt
+            cat migu_tv.tmp >> new-iptv.txt
+          fi
+          # 4. 其他频道
+          if [ -s migu_other.tmp ]; then
+            echo -e "\n# 其他频道" >> new-iptv.txt
+            cat migu_other.tmp >> new-iptv.txt
           fi
 
-          if [ -s movie_list.tmp ]; then
-            echo -e "\n# 咪咕影视频道" >> new-iptv.txt
-            cat movie_list.tmp >> new-iptv.txt
-          fi
-
+          # 校验文件非空
           if [ ! -s new-iptv.txt ]; then
             echo "::error::源文件处理后无有效频道数据"
             exit 1
@@ -88,6 +89,7 @@ jobs:
           NEW_HASH=$(sha256sum new-iptv.txt | awk '{print $1}')
           echo "new_hash=$NEW_HASH" >> $GITHUB_OUTPUT
 
+          # 清理临时文件
           rm -f migu.m3u cctv_raw.m3u *.tmp
 
       - name: Compare file hash
@@ -105,9 +107,9 @@ jobs:
           git config --global user.name "Actions Bot"
           git config --global user.email "actions@github.com"
           git add iptv.txt
-          git commit -m "Auto update IPTV [修正分类+按名称排序] $(date -u '+%Y-%m-%d %H:%M')"
+          git commit -m "Auto update IPTV 分区独立不合并 无去重" $(date -u '+%Y-%m-%d %H:%M')
           git push origin main
-          echo "IPTV更新完成：分类修正、频道按名称升序排列"
+          echo "更新完成：独立央视专区 + 咪咕内分央视频道/卫视/其他频道，不去重"
 
       - name: No change skip
         if: steps.compare.outputs.changed == 'false'
