@@ -1,4 +1,4 @@
-name: Auto Sync IPTV
+name: Auto Sync IPTV with Email
 on:
   schedule:
     - cron: '0 0,12 * * *'
@@ -29,7 +29,6 @@ jobs:
         id: download
         run: |
           echo "开始拉取远程播放源"
-          # 下载源文件，强化网络容错，移除-v精简日志
           curl -s -L --connect-timeout 20 --retry 5 --retry-delay 5 -o migu.m3u "https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u"
           if [ ! -s migu.m3u ]; then
             echo "::error::migu源下载失败"
@@ -43,21 +42,28 @@ jobs:
           fi
           echo "两个远程源全部下载完毕"
 
-          # 处理央视源分组标签
           sed -i 's/\(tvg-logo="[^"]*"\)/\1,group-title="央视专版",/' cctv_raw.m3u
 
-          # 解析频道内容、去重、过滤空行
+          # 1. 单独解析外部央视源
           awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' cctv_raw.m3u \
-            | grep -v '^$' | sort -t ',' -k2 -u > cctv_list.tmp
+            | grep -v '^$' > cctv_ext.tmp
+
+          # 2. 解析全部咪咕源原始数据
           awk '/^#EXTINF:/{sub(/.*,/,"",$0);n=$0;next}/^http/{print n","$0}' migu.m3u \
-            | grep -v '^$' | sort -t ',' -k2 -u > migu_list.tmp
+            | grep -v '^$' > migu_all.tmp
 
-          # 卫视匹配关键词
-          TV_KEY="卫视|北京|上海|广东|湖南|浙江|江苏|安徽|山东|四川|重庆|湖北|河南|河北|福建|江西|广西|云南|贵州|辽宁|吉林|黑龙江|山西|陕西|甘肃|宁夏|青海|新疆|内蒙古|天津|海南"
-          grep -E "$TV_KEY" migu_list.tmp | grep -v '^$' > tv_list.tmp
-          grep -v -E "$TV_KEY" migu_list.tmp | grep -v '^$' > movie_list.tmp
+          # 从咪咕中分离自带CCTV频道，合并进央视组
+          grep -i "CCTV\|央视" migu_all.tmp > cctv_migu.tmp
+          cat cctv_ext.tmp cctv_migu.tmp | sort -t ',' -k1 -u > cctv_list.tmp
 
-          # 组装文件，自动判断分组是否有内容，无内容则不输出标题
+          # 卫视统一关键词，仅匹配卫视，避免地名误分类
+          TV_KEY="卫视"
+          grep -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" | sort -t ',' -k1 -u > tv_list.tmp
+
+          # 剩余全部归咪咕影视
+          grep -v -E "$TV_KEY" migu_all.tmp | grep -v -i "CCTV\|央视" | sort -t ',' -k1 -u > movie_list.tmp
+
+          # 固定顺序输出：央视 → 卫视 → 咪咕影视，无内容不打印标题
           > new-iptv.txt
           if [ -s cctv_list.tmp ]; then
             echo "# 央视专版频道" >> new-iptv.txt
@@ -74,7 +80,6 @@ jobs:
             cat movie_list.tmp >> new-iptv.txt
           fi
 
-          # 文件有效性校验
           if [ ! -s new-iptv.txt ]; then
             echo "::error::源文件处理后无有效频道数据"
             exit 1
@@ -83,7 +88,6 @@ jobs:
           NEW_HASH=$(sha256sum new-iptv.txt | awk '{print $1}')
           echo "new_hash=$NEW_HASH" >> $GITHUB_OUTPUT
 
-          # 清理临时文件
           rm -f migu.m3u cctv_raw.m3u *.tmp
 
       - name: Compare file hash
@@ -101,9 +105,9 @@ jobs:
           git config --global user.name "Actions Bot"
           git config --global user.email "actions@github.com"
           git add iptv.txt
-          git commit -m "Auto update IPTV [分组修复+去重] $(date -u '+%Y-%m-%d %H:%M')"
+          git commit -m "Auto update IPTV [修正分类+按名称排序] $(date -u '+%Y-%m-%d %H:%M')"
           git push origin main
-          echo "IPTV更新完成：分组排版规范、全局去重"
+          echo "IPTV更新完成：分类修正、频道按名称升序排列"
 
       - name: No change skip
         if: steps.compare.outputs.changed == 'false'
