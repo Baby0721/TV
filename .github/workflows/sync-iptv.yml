@@ -46,18 +46,15 @@ jobs:
           # 给央视源统一添加分组标签
           sed -i 's/\(tvg-logo="[^"]*"\)/\1,group-title="央视专版",/' cctv_raw.m3u
 
-          # ====================== 核心处理：解析m3u、保留频道名、去重、转TXT ======================
+          # 核心处理：解析m3u、保留频道名、按链接去重、生成标准TXT
           echo "开始解析频道信息、去重、生成标准TXT订阅文件"
-          # 合并源文件，提取 频道名称+播放链接，过滤无效数据
           cat migu.m3u cctv_raw.m3u | awk '
             /^#EXTINF:/ {
-              # 提取频道名称
               sub(/.*,/, "", $0);
               name=$0;
               next;
             }
             /^http/ {
-              # 输出 频道名,链接 格式
               print name "," $0
             }
           ' | sort -t ',' -k2 -u > new-iptv.txt
@@ -91,10 +88,10 @@ jobs:
       - name: Push new txt file
         if: steps.compare.outputs.changed == 'true'
         run: |
-          mv new-iptv.txt iptv-fe.txt
+          mv new-iptv.txt iptv.txt
           git config --global user.name "Actions Bot"
           git config --global user.email "actions@github.com"
-          git add iptv-fe.txt
+          git add iptv.txt
           git commit -m "Auto update IPTV [去重+保留频道名 TXT格式] $(date -u '+%Y-%m-%d %H:%M')"
           git push origin main
           echo "IPTV源更新完成：自动去重、保留全量频道信息"
