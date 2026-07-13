@@ -1,0 +1,39 @@
+name: sync_shdx
+permissions:
+  contents: write
+on:
+  schedule:
+    # 北京时间11:00 UTC03:00
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  sync_shdx:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 创建live目录
+        run: mkdir -p live
+
+      - name: 下载合并上海电信源为shdx.txt
+        run: |
+          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+          > live/shdx.txt
+          wget $WGET_ARGS -O tmp1.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信.txt || true
+          wget $WGET_ARGS -O tmp2.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信1.txt || true
+          wget $WGET_ARGS -O tmp3.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信2.txt || true
+          wget $WGET_ARGS -O tmp4.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信3.txt || true
+          wget $WGET_ARGS -O tmp5.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信4.txt || true
+          cat tmp1.txt tmp2.txt tmp3.txt tmp4.txt tmp5.txt >> live/shdx.txt
+          rm -f tmp1.txt tmp2.txt tmp3.txt tmp4.txt tmp5.txt
+
+      - name: Git提交
+        run: |
+          git config --global user.name "Github Actions Bot"
+          git config --global user.email "bot@github.com"
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add live/
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update shdx live source"
+          git push
