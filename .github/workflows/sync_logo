@@ -1,0 +1,41 @@
+name: sync_logo
+permissions:
+  contents: write
+on:
+  workflow_dispatch:
+
+jobs:
+  pull_logo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出当前仓库
+        uses: actions/checkout@v4
+
+      - name: 安装依赖
+        run: |
+          sudo apt update
+          sudo apt install -y wget unzip
+
+      - name: 清空本地旧logo目录
+        run: rm -rf logo && mkdir -p logo
+
+      - name: 下载完整logo压缩包
+        run: |
+          # 下载整个仓库zip
+          wget --timeout=20 --tries=3 https://github.com/samkolau/TVLOGO/archive/refs/heads/main.zip -O logo_temp.zip
+          unzip -q logo_temp.zip
+          # 将里面logo文件夹全部复制到本仓库logo/
+          cp -r TVLOGO-main/logo/* logo/
+          # 清理临时文件
+          rm -rf logo_temp.zip TVLOGO-main
+
+      - name: 提交更新logo
+        run: |
+          git config --local user.name "Github Actions Bot"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add logo/
+          if ! git diff --staged --quiet; then
+            git commit -m "Auto sync TVLOGO logo folder"
+            git push
+          fi
