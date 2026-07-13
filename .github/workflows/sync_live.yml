@@ -1,4 +1,4 @@
-name: 自动同步直播源
+name: sync_live
 permissions:
   contents: write
 on:
