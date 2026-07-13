@@ -1,4 +1,4 @@
-name: 同步所有子目录PNG台标并扁平化
+name: sync_logo
 permissions:
   contents: write
 on:
