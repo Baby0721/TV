@@ -20,12 +20,12 @@ jobs:
       - name: 批量下载直播源 & m3u转txt
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          # 1. develop202_migu txt源
-          wget $WGET_ARGS -O live/develop202_migu https://raw.githubusercontent.com/develop202/migu_video/main/interfaceTXT.txt || true
-          # 2. vbskycn_ipv4
-          wget $WGET_ARGS -O live/vbskycn_ipv4 https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
-          # 3. yuanzl77_live
-          wget $WGET_ARGS -O live/yuanzl77_live https://raw.githubusercontent.com/yuanzl77/IPTV/master/live.txt || true
+          # 1. develop202_migu.txt
+          wget $WGET_ARGS -O live/develop202_migu.txt https://raw.githubusercontent.com/develop202/migu_video/main/interfaceTXT.txt || true
+          # 2. vbskycn_ipv4.txt
+          wget $WGET_ARGS -O live/vbskycn_ipv4.txt https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
+          # 3. yuanzl77_live.txt
+          wget $WGET_ARGS -O live/yuanzl77_live.txt https://raw.githubusercontent.com/yuanzl77/IPTV/master/live.txt || true
           # 4. ioptu migu m3u 临时下载
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
 
@@ -44,7 +44,8 @@ jobs:
                       name = match.group(1).strip()
               elif line and not line.startswith("#"):
                   output.append(f"{name},{line}")
-          with open("live/ioptu_migu","w",encoding="utf-8") as f:
+          # 输出带txt后缀
+          with open("live/ioptu_migu.txt","w",encoding="utf-8") as f:
               f.write("\n".join(output))
           EOF
           # 删除临时m3u文件
