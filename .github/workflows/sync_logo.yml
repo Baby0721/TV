@@ -1,4 +1,4 @@
-name: sync_logo
+name: 同步所有子目录PNG台标并扁平化
 permissions:
   contents: write
 on:
@@ -11,31 +11,30 @@ jobs:
       - name: 检出当前仓库
         uses: actions/checkout@v4
 
-      - name: 安装依赖
-        run: |
-          sudo apt update
-          sudo apt install -y wget unzip
+      - name: 安装工具
+        run: sudo apt update && sudo apt install -y wget unzip
 
-      - name: 清空本地旧logo目录
-        run: rm -rf logo && mkdir -p logo
-
-      - name: 下载完整logo压缩包
+      - name: sync_logo
         run: |
-          # 下载整个仓库zip
+          # 清空本地logo文件夹
+          rm -rf logo && mkdir -p logo
+          # 下载远程logo仓库压缩包
           wget --timeout=20 --tries=3 https://github.com/samkolau/TVLOGO/archive/refs/heads/main.zip -O logo_temp.zip
           unzip -q logo_temp.zip
-          # 将里面logo文件夹全部复制到本仓库logo/
-          cp -r TVLOGO-main/logo/* logo/
+
+          # 递归查找所有png，全部复制到本地logo根目录（扁平化）
+          find TVLOGO-main/logo -type f -name "*.png" -exec cp {} logo/ \;
+
           # 清理临时文件
           rm -rf logo_temp.zip TVLOGO-main
 
-      - name: 提交更新logo
+      - name: Git提交推送
         run: |
           git config --local user.name "Github Actions Bot"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add logo/
           if ! git diff --staged --quiet; then
-            git commit -m "Auto sync TVLOGO logo folder"
+            git commit -m "Auto sync all subfolder png logo flatten"
             git push
           fi
