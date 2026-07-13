@@ -1,4 +1,4 @@
-#EXTM3U x-tvg-url="https://raw.githubusercontent.com/kuke31/xmlgz/main/e.xml.gz"
+#EXTM3U x-tvg-url="https://tvbox.aiga.cc/epg/kuke31.xml.gz"
 #EXTINF:-1 group-title="央视频道" tvg-logo="https://tvbox.aiga.cc/logo/CCTV-1.png",CCTV-1
 http://39.175.52.28:2026/IPTV.php?id=CCTV1
 #EXTINF:-1 group-title="央视频道" tvg-logo="https://tvbox.aiga.cc/logo/CCTV-1.png",CCTV-1
