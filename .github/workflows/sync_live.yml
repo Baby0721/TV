@@ -1,12 +1,11 @@
-name: sync_live
+name: 自动同步直播源
 permissions:
   contents: write
 on:
   schedule:
-    # 北京时间 07:00 同步通用直播源 UTC 23:00
+    # 北京时间 07:00 每日同步直播源 → UTC 23:00
     - cron: "0 23 * * *"
-    # 北京时间 11:00 下载合并上海电信源 UTC 03:00
-  workflow_dispatch:
+  workflow_dispatch: # 支持手动运行
 
 jobs:
   sync_live:
@@ -18,8 +17,7 @@ jobs:
       - name: 创建live目录
         run: mkdir -p live
 
-      - name: 【07点任务】下载4路通用直播源，m3u转txt
-        if: github.event.schedule == '0 23 * * *'
+      - name: 批量下载直播源 & m3u转txt
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
           # 1. develop202_migu.txt
@@ -28,9 +26,10 @@ jobs:
           wget $WGET_ARGS -O live/vbskycn_ipv4.txt https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
           # 3. yuanzl77_live.txt
           wget $WGET_ARGS -O live/yuanzl77_live.txt https://raw.githubusercontent.com/yuanzl77/IPTV/master/live.txt || true
-          # 4. ioptu migu m3u 临时下载转换
+          # 4. ioptu migu m3u 临时下载
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
 
+          # M3U 转 IPTV标准TXT格式（频道名,链接）
           python3 << EOF
           import re
           output = []
@@ -45,27 +44,12 @@ jobs:
                       name = match.group(1).strip()
               elif line and not line.startswith("#"):
                   output.append(f"{name},{line}")
+          # 输出带txt后缀
           with open("live/ioptu_migu.txt","w",encoding="utf-8") as f:
               f.write("\n".join(output))
           EOF
+          # 删除临时m3u文件
           rm -f tmp_ioptu.m3u
-
-      - name: 【11点任务】下载5个上海电信源并合并为shdx.txt
-        if: github.event.schedule == '0 3 * * *'
-        run: |
-          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          # 清空旧文件
-          > live/shdx.txt
-          # 文件名无空格，直接使用原链接
-          wget $WGET_ARGS -O tmp1.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信.txt || true
-          wget $WGET_ARGS -O tmp2.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信1.txt || true
-          wget $WGET_ARGS -O tmp3.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信2.txt || true
-          wget $WGET_ARGS -O tmp4.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信3.txt || true
-          wget $WGET_ARGS -O tmp5.txt https://raw.githubusercontent.com/jia070310/4K-IPTV-M3U/main/txt/上海电信4.txt || true
-          # 合并全部临时文件
-          cat tmp1.txt tmp2.txt tmp3.txt tmp4.txt tmp5.txt >> live/shdx.txt
-          # 清理临时文件
-          rm -f tmp1.txt tmp2.txt tmp3.txt tmp4.txt tmp5.txt
 
       - name: Git提交推送
         run: |
@@ -73,5 +57,6 @@ jobs:
           git config --global user.email "bot@github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add live/
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update live sources"
+          # 无文件变更则跳过提交
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all live sources"
           git push
