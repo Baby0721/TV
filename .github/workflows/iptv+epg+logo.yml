@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 下载源并生成tv.m3u
+      - name: 下载源并生成带分组tv.m3u
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
           wget $WGET_ARGS -O source_tmp.txt http://iptv.aiga.cc/txt || true
@@ -33,18 +33,26 @@ jobs:
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tv.m3u"
           lines = [f'#EXTM3U x-tvg-url="{epg_link}"']
+          current_group = "其他频道" # 默认分组
 
           if os.path.exists("source_tmp.txt") and os.path.getsize("source_tmp.txt") > 0:
               with open("source_tmp.txt", "r", encoding="utf-8", errors="ignore") as f:
                   for raw_line in f:
                       l = raw_line.strip()
-                      if not l or "," not in l:
+                      if not l:
                           continue
-                      ch_name, url = l.split(",", 1)
-                      safe_ch = urllib.parse.quote(ch_name)
-                      logo_url = f"{logo_base}{safe_ch}.png"
-                      lines.append(f'#EXTINF:-1 tvg-logo="{logo_url}",{ch_name}')
-                      lines.append(url)
+                      # 判断分组行 xxx,#genre#
+                      if l.endswith(",#genre#"):
+                          current_group = l.replace(",#genre#", "")
+                          continue
+                      # 普通频道行 名称,地址
+                      if "," in l:
+                          ch_name, url = l.split(",", 1)
+                          safe_ch = urllib.parse.quote(ch_name)
+                          logo_url = f"{logo_base}{safe_ch}.png"
+                          # 写入分组标识 group-title
+                          lines.append(f'#EXTINF:-1 group-title="{current_group}" tvg-logo="{logo_url}",{ch_name}')
+                          lines.append(url)
 
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write("\n".join(lines))
@@ -58,5 +66,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add tv.m3u
-          git diff --quiet && git diff --staged --quiet || git commit -m "自动更新tv.m3u(EPG+LOGO)"
+          git diff --quiet && git diff --staged --quiet || git commit -m "自动更新tv.m3u(分组+EPG+LOGO)"
           git push
