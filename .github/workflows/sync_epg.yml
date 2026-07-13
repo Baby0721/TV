@@ -1,4 +1,4 @@
-name: 自动同步EPG节目单（每日早8点统一拉取）
+name: sync_epg
 # 显式赋予文件写入权限，解决git push无权限
 permissions:
   contents: write
