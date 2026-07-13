@@ -1,4 +1,4 @@
-name: sync_shdx
+name: sync_live_shdx
 permissions:
   contents: write
 on:
