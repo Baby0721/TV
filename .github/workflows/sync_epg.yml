@@ -1,0 +1,43 @@
+name: 自动同步EPG节目单（每日早8点统一拉取）
+# 显式赋予文件写入权限，解决git push无权限
+permissions:
+  contents: write
+on:
+  schedule:
+    # 北京时间 08:00 每日统一执行 → UTC 00:00
+    - cron: "0 0 * * *"
+  workflow_dispatch: # 支持手动一键同步全部EPG
+
+jobs:
+  sync_epg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 创建epg文件夹
+        run: mkdir -p epg
+
+      - name: 批量下载全部EPG源（增加重试、ssl容错，单条失败不中断）
+        run: |
+          # wget参数：重试3次、忽略ssl证书、超时15秒
+          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+          # 1. kuke31源
+          wget $WGET_ARGS -O epg/kuke31.xml.gz https://raw.githubusercontent.com/kuke31/xmlgz/main/e.xml.gz || true
+          # 2. migu源
+          wget $WGET_ARGS -O epg/migu.xml https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/playback.xml || true
+          # 3. 51zmt源
+          wget $WGET_ARGS -O epg/51zmt.xml.gz http://epg.51zmt.top:8000/e.xml.gz || true
+          # 4. zsdc源 已修改文件名 zsdc.xml（完成你之前的需求）
+          wget $WGET_ARGS -O epg/zsdc.xml https://epg.zsdc.eu.org/t.xml || true
+
+      - name: 配置Git并推送更新EPG文件
+        run: |
+          git config --global user.name "Github Actions Bot"
+          git config --global user.email "bot@github.com"
+          # 强制替换远程地址，携带token鉴权，彻底解决推送权限不足
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add epg/
+          # 无变更则跳过提交
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all EPG files at 08:00 Beijing time"
+          git push
