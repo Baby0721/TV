@@ -1,0 +1,61 @@
+name: sync_live
+permissions:
+  contents: write
+on:
+  schedule:
+    # 北京时间 07:00 每日同步直播源 → UTC 23:00
+    - cron: "0 23 * * *"
+  workflow_dispatch: # 支持手动运行
+
+jobs:
+  sync_live:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 拉取仓库代码
+        uses: actions/checkout@v4
+
+      - name: 创建live目录
+        run: mkdir -p live
+
+      - name: 批量下载直播源 & m3u转txt
+        run: |
+          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+          # 1. develop202_migu txt源
+          wget $WGET_ARGS -O live/develop202_migu https://raw.githubusercontent.com/develop202/migu_video/main/interfaceTXT.txt || true
+          # 2. vbskycn_ipv4
+          wget $WGET_ARGS -O live/vbskycn_ipv4 https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
+          # 3. yuanzl77_live
+          wget $WGET_ARGS -O live/yuanzl77_live https://raw.githubusercontent.com/yuanzl77/IPTV/master/live.txt || true
+          # 4. ioptu migu m3u 临时下载
+          wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
+
+          # M3U 转 IPTV标准TXT格式（频道名,链接）
+          python3 << EOF
+          import re
+          output = []
+          with open("tmp_ioptu.m3u","r",encoding="utf-8",errors="ignore") as f:
+              lines = f.readlines()
+          name = ""
+          for line in lines:
+              line = line.strip()
+              if line.startswith("#EXTINF"):
+                  match = re.search(r',([^,]+)$', line)
+                  if match:
+                      name = match.group(1).strip()
+              elif line and not line.startswith("#"):
+                  output.append(f"{name},{line}")
+          with open("live/ioptu_migu","w",encoding="utf-8") as f:
+              f.write("\n".join(output))
+          EOF
+          # 删除临时m3u文件
+          rm -f tmp_ioptu.m3u
+
+      - name: Git提交推送
+        run: |
+          git config --global user.name "Github Actions Bot"
+          git config --global user.email "bot@github.com"
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add live/
+          # 无文件变更则跳过提交
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all live sources"
+          git push
