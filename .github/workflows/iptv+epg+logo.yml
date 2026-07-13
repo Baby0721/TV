@@ -29,7 +29,7 @@ jobs:
           import urllib.parse
 
           # 配置
-          epg_link = "https://raw.githubusercontent.com/kuke31/xmlgz/main/e.xml.gz"
+          epg_link = "https://tvbox.aiga.cc/epg/kuke31.xml.gz"
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tv.m3u"
           lines = [f'#EXTM3U x-tvg-url="{epg_link}"']
