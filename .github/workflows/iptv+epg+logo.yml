@@ -29,7 +29,7 @@ jobs:
           import urllib.parse
 
           # 配置
-          epg_link = "https://tvbox.aiga.cc/epg/kuke31.xml.gz,https://tvbox.aiga.cc/epg/51zmt.xml.gz,https://tvbox.aiga.cc/epg/migu.xml,https://tvbox.aiga.cc/epg/zsdc.xml"
+          epg_link = "https://raw.githubusercontent.com/kuke31/xmlgz/main/e.xml.gz"
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tv.m3u"
           lines = [f'#EXTM3U x-tvg-url="{epg_link}"']
@@ -50,8 +50,8 @@ jobs:
                           ch_name, url = l.split(",", 1)
                           safe_ch = urllib.parse.quote(ch_name)
                           logo_url = f"{logo_base}{safe_ch}.png"
-                          # 写入分组标识 group-title
-                          lines.append(f'#EXTINF:-1 group-title="{current_group}" tvg-logo="{logo_url}",{ch_name}')
+                          # 新增 tvg-id、tvg-name 标准字段
+                          lines.append(f'#EXTINF:-1 tvg-id="{ch_name}" tvg-name="{ch_name}" group-title="{current_group}" tvg-logo="{logo_url}",{ch_name}')
                           lines.append(url)
 
           with open(out_name, "w", encoding="utf-8") as fw:
