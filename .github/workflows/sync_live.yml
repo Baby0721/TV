@@ -28,6 +28,8 @@ jobs:
           wget $WGET_ARGS -O live/yuanzl77_live.txt https://raw.githubusercontent.com/yuanzl77/IPTV/master/live.txt || true
           # 4. ioptu migu m3u 临时下载
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
+          # 新增：my.m3u 下载到仓库根目录，不做格式转换
+          wget $WGET_ARGS -O my.m3u https://iptv.aiga.cc || true
 
           # M3U 转 IPTV标准TXT格式（频道名,链接）
           python3 << EOF
@@ -56,7 +58,7 @@ jobs:
           git config --global user.name "Github Actions Bot"
           git config --global user.email "bot@github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git add live/
+          git add live/ my.m3u
           # 无文件变更则跳过提交
           git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all live sources"
           git push
