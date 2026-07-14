@@ -5,7 +5,7 @@ permissions:
 on:
   schedule:
     # 北京时间 08:00 每日统一执行 → UTC 00:00
-    - cron: "0 0 * * *"
+    - cron: "30 23 * * *"
   workflow_dispatch: # 支持手动一键同步全部EPG
 
 jobs:
