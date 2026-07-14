@@ -28,8 +28,10 @@ jobs:
           wget $WGET_ARGS -O epg/migu.xml https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/playback.xml || true
           # 3. 51zmt源
           wget $WGET_ARGS -O epg/51zmt.xml.gz http://epg.51zmt.top:8000/e.xml.gz || true
-          # 4. zsdc源 已修改文件名 zsdc.xml（完成你之前的需求）
+          # 4. zsdc源
           wget $WGET_ARGS -O epg/zsdc.xml https://epg.zsdc.eu.org/t.xml || true
+          # 5. my源 新增
+          wget $WGET_ARGS -O epg/my.xml https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml || true
 
       - name: 配置Git并推送更新EPG文件
         run: |
@@ -39,5 +41,5 @@ jobs:
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add epg/
           # 无变更则跳过提交
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all EPG files at 08:00 Beijing time"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all EPG files at 07:30 Beijing time"
           git push
