@@ -40,12 +40,14 @@ jobs:
             echo "多次重试全部失败，退出任务"
             exit 1
           fi
+          ls -la
 
       - name: Process M3U (标准EPG头+中文台标编码)
         run: |
           python3 - <<END
 import re
 import urllib.parse
+import os
 
 raw_file = "raw.m3u"
 out_file = "tv.m3u"
@@ -86,6 +88,7 @@ with open(out_file, "w", encoding="utf-8") as f:
     f.write(final_text)
 
 print("文件处理完成，已生成 tv.m3u")
+print("当前目录文件列表:", os.listdir("."))
 END
 
       - name: Commit & Push file
