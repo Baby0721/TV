@@ -78,7 +78,7 @@ jobs:
           # 纯净无全局EPG头部，无多余空行
           final_text = f'#EXTM3U\n{final_content}'
 
-          # 输出到仓库根目录 tv.m3u
+          # 输出到仓库根目录 tv1.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write(final_text)
           EOF
