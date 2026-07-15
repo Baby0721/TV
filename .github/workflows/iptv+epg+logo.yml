@@ -2,7 +2,7 @@ name: iptv+epg+logo
 permissions:
   contents: write
 on:
-  # 北京时间早上8点 = UTC 0点
+  # UTC 0点 = 北京时间早上8点
   schedule:
     - cron: "0 0 * * *"
   workflow_dispatch:
@@ -19,53 +19,70 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: 下载源并生成带分组tv.m3u
+      - name: 下载原始M3U源（失败重试+空文件校验）
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          wget $WGET_ARGS -O source_tmp.txt http://iptv.aiga.cc/txt || true
+          wget $WGET_ARGS -O raw_source.m3u https://iptv.aiga.cc || true
+          # 校验文件是否下载成功且非空
+          if [ ! -f "raw_source.m3u" ] || [ ! -s "raw_source.m3u" ]; then
+            echo "源文件下载失败或为空，终止任务"
+            exit 1
+          fi
 
+      - name: 处理M3U：替换标准EPG头 + 中文台标URL编码
+        run: |
           python3 << EOF
           import os
           import urllib.parse
+          import re
 
-          # 配置
-          epg_link = "https://tvbox.aiga.cc/epg/kuke31.xml.gz,https://tvbox.aiga.cc/epg/51zmt.xml.gz,https://tvbox.aiga.cc/epg/migu.xml,https://tvbox.aiga.cc/epg/zsdc.xml"
-          epg_link = "https://tvbox.aiga.cc/epg/migu.xml,https://tvbox.aiga.cc/epg/zsdc.xml,https://tvbox.aiga.cc/epg/51zmt.xml.gz,https://tvbox.aiga.cc/epg/kuke31.xml.gz"
+          # 配置参数
+          epg_link = "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz,https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml"
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tv.m3u"
-          lines = [f'#EXTM3U x-tvg-url="{epg_link}"']
-          current_group = "其他频道" # 默认分组
+          raw_file = "raw_source.m3u"
 
-          if os.path.exists("source_tmp.txt") and os.path.getsize("source_tmp.txt") > 0:
-              with open("source_tmp.txt", "r", encoding="utf-8", errors="ignore") as f:
-                  for raw_line in f:
-                      l = raw_line.strip()
-                      if not l:
-                          continue
-                      # 判断分组行 xxx,#genre#
-                      if l.endswith(",#genre#"):
-                          current_group = l.replace(",#genre#", "")
-                          continue
-                      # 普通频道行 名称,地址
-                      if "," in l:
-                          ch_name, url = l.split(",", 1)
-                          safe_ch = urllib.parse.quote(ch_name)
-                          logo_url = f"{logo_base}{safe_ch}.png"
-                          # 新增 tvg-id、tvg-name 标准字段
-                          lines.append(f'#EXTINF:-1 tvg-id="{ch_name}" tvg-name="{ch_name}" group-title="{current_group}" tvg-logo="{logo_url}",{ch_name}')
-                          lines.append(url)
+          # 正则匹配 tvg-logo="xxx"
+          logo_regex = re.compile(r'(tvg-logo=")([^"]+)(")')
 
+          def encode_logo_path(match):
+              pre = match.group(1)
+              logo_full = match.group(2)
+              suf = match.group(3)
+              # 仅处理当前域名台标，外部logo不改动
+              if logo_full.startswith(logo_base):
+                  file_name = logo_full[len(logo_base):]
+                  safe_name = urllib.parse.quote(file_name)
+                  new_logo = logo_base + safe_name
+                  return f"{pre}{new_logo}{suf}"
+              return match.group(0)
+
+          # 读取原始m3u全部内容
+          with open(raw_file, "r", encoding="utf-8", errors="ignore") as f:
+              raw_content = f.read()
+
+          # 移除原有所有 #EXTM3U 头部行
+          clean_content = re.sub(r'^#EXTM3U.*?\n', "", raw_content, count=1, flags=re.M)
+          # 批量编码所有中文台标链接
+          fixed_content = logo_regex.sub(encode_logo_path, clean_content)
+          # 拼接标准全局EPG头部
+          final_lines = [f'#EXTM3U x-tvg-url="{epg_link}"', "", fixed_content]
+
+          # 输出到仓库根目录 tv.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
-              fw.write("\n".join(lines))
+              fw.write("\n".join(final_lines))
           EOF
 
-          rm -f source_tmp.txt
+      - name: 清理临时文件
+        run: |
+          rm -f raw_source.m3u
 
-      - name: 提交推送
+      - name: 提交推送更新
         run: |
           git config --local user.name "Github Actions Bot"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add tv.m3u
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update tv.m3u"
+          # 无变更则跳过提交
+          git diff --quiet && git diff --staged --quiet || git commit -m "定时更新标准直播源 tv.m3u"
           git push
