@@ -1,4 +1,4 @@
-#EXTM3U x-tvg-url="https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz"
+#EXTM3U x-tvg-url="https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz,https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml"
 #EXTINF:-1 tvg-id="CCTV-1" tvg-name="CCTV1综合" tvg-logo="https://tvbox.aiga.cc/logo/CCTV1综合.png" group-title="央视频道",CCTV1综合
 http://39.175.52.28:2026/IPTV.php?id=CCTV1
 #EXTINF:-1 tvg-id="CCTV-1" tvg-name="CCTV1综合" tvg-logo="https://tvbox.aiga.cc/logo/CCTV1综合.png" group-title="央视频道",CCTV1综合
