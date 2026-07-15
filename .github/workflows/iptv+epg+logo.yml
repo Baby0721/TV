@@ -37,7 +37,7 @@ jobs:
           import re
 
           # 配置参数
-          epg_link = "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz"
+          epg_link = "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml,https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz"
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tv.m3u"
           raw_file = "raw_source.m3u"
