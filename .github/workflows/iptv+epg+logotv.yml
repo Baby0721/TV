@@ -1,4 +1,4 @@
-name: iptv+epg+logo
+name: iptv+epg+logo1
 permissions:
   contents: write
 on:
@@ -39,7 +39,7 @@ jobs:
           # 配置参数
           epg_link = "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz,https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml"
           logo_base = "https://tvbox.aiga.cc/logo/"
-          out_name = "tv1.m3u"
+          out_name = "tv.m3u"
           raw_file = "raw_source.m3u"
 
           # 正则1：匹配 tvg-logo="xxx" 做中文URL编码
@@ -78,7 +78,7 @@ jobs:
           # 纯净无全局EPG头部，无多余空行
           final_text = f'#EXTM3U\n{final_content}'
 
-          # 输出到仓库根目录 tv1.m3u
+          # 输出到仓库根目录 tv.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write(final_text)
           EOF
