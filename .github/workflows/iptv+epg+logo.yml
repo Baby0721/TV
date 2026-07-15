@@ -2,9 +2,9 @@ name: iptv+epg+logo
 permissions:
   contents: write
 on:
-  # UTC 0点 = 北京时间早上8点
+  # UTC 19点 = 北京时间早上3点
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 19 * * *"
   workflow_dispatch:
 
 jobs:
@@ -65,12 +65,12 @@ jobs:
           clean_content = re.sub(r'^#EXTM3U.*?\n', "", raw_content, count=1, flags=re.M)
           # 批量编码所有中文台标链接
           fixed_content = logo_regex.sub(encode_logo_path, clean_content)
-          # 拼接标准全局EPG头部
-          final_lines = [f'#EXTM3U x-tvg-url="{epg_link}"', "", fixed_content]
+          # 修复：去掉空字符串，头部紧跟内容，无多余空行
+          final_text = f'#EXTM3U x-tvg-url="{epg_link}"\n{fixed_content}'
 
           # 输出到仓库根目录 tv.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
-              fw.write("\n".join(final_lines))
+              fw.write(final_text)
           EOF
 
       - name: 清理临时文件
@@ -84,5 +84,5 @@ jobs:
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add tv.m3u
           # 无变更则跳过提交
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update iptv+epg+logo tv.m3u"
+          git diff --quiet && git diff --staged --quiet || git commit -m "定时更新标准直播源 tv.m3u"
           git push
