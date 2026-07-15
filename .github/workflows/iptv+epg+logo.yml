@@ -1,70 +1,112 @@
-name: iptv+epg+logo
-permissions:
-  contents: write
+name: IPTV Auto Sync
 on:
-  # 北京时间早上8点 = UTC 0点
   schedule:
-    - cron: "0 0 * * *"
+    # UTC 19点 = 北京时间 03:00
+    - cron: '0 19 * * *'
   workflow_dispatch:
 
 jobs:
-  make_m3u:
+  sync:
     runs-on: ubuntu-latest
     steps:
-      - name: 检出仓库
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Python环境
-        uses: actions/setup-python@v4
+      - name: Setup Python3
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: 下载源并生成带分组tv.m3u
+      - name: Download source m3u (retry on fail/empty)
         run: |
-          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          wget $WGET_ARGS -O source_tmp.txt http://iptv.aiga.cc/txt || true
+          MAX_RETRY=3
+          DELAY=5
+          SRC_URL="https://iptv.aiga.cc"
+          TMP_M3U="raw.m3u"
+          ok=0
+          for ((i=1; i<=MAX_RETRY; i++)); do
+            echo "===== 第 $i 次下载尝试 ====="
+            # -L 跟随重定向，-v 打印请求日志方便排错
+            curl -fsSL -v "$SRC_URL" -o "$TMP_M3U"
+            curl_code=$?
+            # 校验：请求成功 + 文件非空
+            if [ $curl_code -eq 0 ] && [ -s "$TMP_M3U" ]; then
+              echo "✅ 下载成功，文件非空"
+              ok=1
+              break
+            fi
+            echo "❌ 下载失败或返回空文件，等待${DELAY}秒重试"
+            sleep $DELAY
+          done
+          if [ $ok -ne 1 ]; then
+            echo "所有重试全部失败，终止工作流"
+            exit 1
+          fi
 
-          python3 << EOF
-          import os
-          import urllib.parse
-
-          # 配置
-          epg_link = "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml,https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz,https://tvbox.aiga.cc/epg/migu.xml,https://tvbox.aiga.cc/epg/zsdc.xml,https://tvbox.aiga.cc/epg/51zmt.xml.gz,https://tvbox.aiga.cc/epg/kuke31.xml.gz"
-          logo_base = "https://tvbox.aiga.cc/logo/"
-          out_name = "tv.m3u"
-          lines = [f'#EXTM3U x-tvg-url="{epg_link}"']
-          current_group = "其他频道" # 默认分组
-
-          if os.path.exists("source_tmp.txt") and os.path.getsize("source_tmp.txt") > 0:
-              with open("source_tmp.txt", "r", encoding="utf-8", errors="ignore") as f:
-                  for raw_line in f:
-                      l = raw_line.strip()
-                      if not l:
-                          continue
-                      # 判断分组行 xxx,#genre#
-                      if l.endswith(",#genre#"):
-                          current_group = l.replace(",#genre#", "")
-                          continue
-                      # 普通频道行 名称,地址
-                      if "," in l:
-                          ch_name, url = l.split(",", 1)
-                          safe_ch = urllib.parse.quote(ch_name)
-                          logo_url = f"{logo_base}{safe_ch}.png"
-                          # 新增 tvg-id、tvg-name 标准字段
-                          lines.append(f'#EXTINF:-1 tvg-id="{ch_name}" tvg-name="{ch_name}" group-title="{current_group}" tvg-logo="{logo_url}",{ch_name}')
-                          lines.append(url)
-
-          with open(out_name, "w", encoding="utf-8") as fw:
-              fw.write("\n".join(lines))
-          EOF
-
-          rm -f source_tmp.txt
-
-      - name: 提交推送
+      - name: Process m3u — 标准x-tvg-url + 中文台标URL编码
         run: |
-          git config --local user.name "Github Actions Bot"
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          python3 - <<END
+import re
+import urllib.parse
+
+# 全局配置
+raw_file = "raw.m3u"
+out_file = "tv.m3u"
+logo_base = "https://tvbox.aiga.cc/logo/"
+epg_list = [
+    "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz",
+    "https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml"
+]
+
+# 正则匹配 tvg-logo="xxx"
+logo_pat = re.compile(r'(tvg-logo=")([^"]+)(")')
+
+def fix_logo_url(match):
+    prefix = match.group(1)
+    old_url = match.group(2)
+    suffix = match.group(3)
+    # 只处理当前域名台标，外部logo不修改
+    if old_url.startswith(logo_base):
+        filename = old_url[len(logo_base):]
+        encode_name = urllib.parse.quote(filename)
+        new_logo = logo_base + encode_name
+        return f"{prefix}{new_logo}{suffix}"
+    return match.group(0)
+
+# 读取原始M3U
+with open(raw_file, "r", encoding="utf-8") as f:
+    content = f.read()
+
+# 清除文件第一行原始 #EXTM3U 头（re.M 仅匹配行首）
+content_clean = re.sub(r'^#EXTM3U.*\n', "", content, count=1, flags=re.M)
+
+# 批量编码中文台标链接
+content_fixed = logo_pat.sub(fix_logo_url, content_clean)
+
+# 构建标准TVBox兼容头部
+epg_join = ",".join(epg_list)
+standard_header = f'#EXTM3U x-tvg-url="{epg_join}"\n\n'
+final_content = standard_header + content_fixed
+
+# 输出根目录 tv.m3u
+with open(out_file, "w", encoding="utf-8") as fw:
+    fw.write(final_content)
+
+print(f"✅ 文件处理完成，输出：{out_file}")
+END
+
+      - name: Commit & Push tv.m3u
+        run: |
+          git config --global user.name "IPTV Bot"
+          git config --global user.email "bot@aiga.cc"
+          # 拉取远程最新代码防止冲突
+          git pull --rebase
           git add tv.m3u
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update tv.m3u"
-          git push
+          # 判断是否有文件变更
+          if git diff --cached --quiet; then
+            echo "ℹ️ tv.m3u 无内容更新，跳过提交推送"
+          else
+            git commit -m "定时自动更新直播源 $(date '+%Y-%m-%d %H:%M')"
+            git push
+            echo "✅ 文件已提交推送至仓库"
+          fi
