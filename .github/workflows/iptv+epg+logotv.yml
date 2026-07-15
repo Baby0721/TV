@@ -29,7 +29,7 @@ jobs:
             exit 1
           fi
 
-      - name: 处理M3U：每条频道插入tvg-link + 中文台标URL编码
+      - name: 处理M3U：台标编码 + 播放地址追加俊版||tvg=EPG
         run: |
           python3 << EOF
           import os
@@ -42,16 +42,15 @@ jobs:
           out_name = "tv.m3u"
           raw_file = "raw_source.m3u"
 
-          # 正则1：匹配 tvg-logo="xxx" 做中文URL编码
+          # 匹配 tvg-logo 做中文URL编码
           logo_regex = re.compile(r'(tvg-logo=")([^"]+)(")')
-          # 正则2：匹配完整#EXTINF行，末尾插入tvg-link字段
-          extinf_regex = re.compile(r'(#EXTINF:-1.*?)(,.*?$)', re.MULTILINE)
+          # 匹配单独一行播放地址，行尾追加 ||tvg=xxx
+          url_line_regex = re.compile(r'^(http.*)$', re.MULTILINE)
 
           def encode_logo_path(match):
               pre = match.group(1)
               logo_full = match.group(2)
               suf = match.group(3)
-              # 仅处理当前域名台标，外部logo不改动
               if logo_full.startswith(logo_base):
                   file_name = logo_full[len(logo_base):]
                   safe_name = urllib.parse.quote(file_name)
@@ -59,26 +58,24 @@ jobs:
                   return f"{pre}{new_logo}{suf}"
               return match.group(0)
 
-          def add_tvg_link(match):
-              extinf_body = match.group(1)
-              channel_name = match.group(2)
-              # 在#EXTINF行末尾追加标准tvg-link，兼容双播放器
-              return f'{extinf_body} tvg-link="{epg_link}"{channel_name}'
+          def append_tvg_suffix(match):
+              url = match.group(1)
+              # 俊版私有后缀拼接
+              return f"{url}||tvg={epg_link}"
 
-          # 读取原始m3u全部内容
+          # 读取源文件
           with open(raw_file, "r", encoding="utf-8", errors="ignore") as f:
               raw_content = f.read()
 
-          # 移除原有自带 #EXTM3U 头部
+          # 移除原有EXTM3U全局EPG头
           clean_content = re.sub(r'^#EXTM3U.*?\n', "", raw_content, count=1, flags=re.M)
-          # 1. 批量编码所有中文台标链接
+          # 处理台标编码
           fixed_content = logo_regex.sub(encode_logo_path, clean_content)
-          # 2. 每条EXTINF行插入标准tvg-link EPG字段
-          final_content = extinf_regex.sub(add_tvg_link, fixed_content)
-          # 纯净无全局EPG头部，无多余空行
+          # 给所有播放地址行追加俊版EPG后缀
+          final_content = url_line_regex.sub(append_tvg_suffix, fixed_content)
+          # 纯净头部，无空行
           final_text = f'#EXTM3U\n{final_content}'
 
-          # 输出到仓库根目录 tv.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write(final_text)
           EOF
