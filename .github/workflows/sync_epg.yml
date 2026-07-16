@@ -43,5 +43,5 @@ jobs:
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add epg/
           # 无变更则跳过提交
-          git diff --quiet && git diff --staged --quiet || git commit -m "Auto update all EPG files at 07:30 Beijing time"
+          git diff --quiet && git diff --staged --quiet || git commit -m "Update sync_epg"
           git push
