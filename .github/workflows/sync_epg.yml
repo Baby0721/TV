@@ -4,8 +4,9 @@ permissions:
   contents: write
 on:
   schedule:
-    # 北京时间 03:00 每日统一执行 → UTC 19:00
+    # 北京时间 03:00 10:00 每日统一执行 → UTC 19:00 02:00
     - cron: "0 19 * * *"
+    - cron: "0 2 * * *"
   workflow_dispatch: # 支持手动一键同步全部EPG
 
 jobs:
