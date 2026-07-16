@@ -3,8 +3,9 @@ permissions:
   contents: write
 on:
   schedule:
-    # 北京时间 07:00 每日同步直播源 → UTC 23:00
-    - cron: "0 23 * * *"
+    # 北京时间 03:00 10:00 每日统一执行 → UTC 19:00 02:00
+    - cron: "0 19 * * *"
+    - cron: "0 2 * * *"
   workflow_dispatch: # 支持手动运行
 
 jobs:
@@ -30,11 +31,6 @@ jobs:
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
           # 新增：my.m3u 下载到仓库根目录，不做格式转换
           wget $WGET_ARGS -O my.m3u https://iptv.aiga.cc || true
-
-          # 替换my.m3u中失效EPG链接：内网地址替换为有效公网地址
-          if [ -f "my.m3u" ]; then
-            sed -i 's|http://172.17.0.3/epg/epg.gz|https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz|g' my.m3u
-          fi
 
           # M3U 转 IPTV标准TXT格式（频道名,链接）
           python3 << EOF
