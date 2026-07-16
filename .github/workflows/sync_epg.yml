@@ -32,9 +32,9 @@ jobs:
           # 4. zsdc源
           wget $WGET_ARGS -O epg/zsdc.xml https://epg.zsdc.eu.org/t.xml || true
           # 5. my源 xml
-          wget $WGET_ARGS -O epg/my.xml https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml || true
+          wget $WGET_ARGS -O epg/epg.xml https://snail.aiga.cc/tvbox/iptv-api/epg/epg.xml || true
           # 6. my源 gz压缩包 新增
-          wget $WGET_ARGS -O epg/my.xml.gz https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz || true
+          wget $WGET_ARGS -O epg/epg.gz https://snail.aiga.cc/tvbox/iptv-api/epg/epg.gz || true
 
       - name: 配置Git并推送更新EPG文件
         run: |
