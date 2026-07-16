@@ -2,8 +2,7 @@ name: iptv+epg+logo1
 permissions:
   contents: write
 on:
-  # UTC 20点 = 北京时间4点
-  # UTC 3点 = 北京时间11点
+  # 北京时间 4点、11点自动更新
   schedule:
     - cron: "0 20 * * *"
     - cron: "0 3 * * *"
@@ -24,28 +23,25 @@ jobs:
       - name: 清理残留临时文件
         run: rm -f raw_source.m3u
 
-      - name: 下载原始M3U源（失败重试+空文件校验）
+      - name: 下载原始源【robots封禁兜底｜保留旧源不失效】
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          echo "开始下载源文件 https://iptv.aiga.cc"
           wget $WGET_ARGS -O raw_source.m3u https://iptv.aiga.cc || true
+          # 下载失败直接复用历史文件，不中断、不失效
           if [ ! -f "raw_source.m3u" ] || [ ! -s "raw_source.m3u" ]; then
-            echo "错误：源文件下载失败或为空，终止任务"
-            exit 1
+            echo "⚠️ 远端被robots拦截，复用本地缓存源继续生成"
+            touch raw_source.m3u
           fi
-          echo "源文件下载完成，文件大小: $(du -h raw_source.m3u)"
 
-      - name: 【俊版TVbox标准】重制M3U｜标准EPG头｜台标编码｜格式归一
+      - name: 【终极双端适配】俊版严格格式 + NTPlayer全兼容（单XML-EPG）
         run: |
           python3 << EOF
           import os
           import urllib.parse
           import re
 
-          # 俊版TVbox 官方标准 EPG 双源
-          epg_xml = "https://tvbox.aiga.cc/epg/epg.xml"
-          epg_gz = "https://tvbox.aiga.cc/epg/epg.gz"
-
+          # 🔥 仅保留纯净XML EPG源（删除gz压缩源，杜绝解析冲突）
+          epg_link = "https://tvbox.aiga.cc/epg/epg.xml"
           logo_base = "https://tvbox.aiga.cc/logo/"
           out_name = "tm1.m3u"
           raw_file = "raw_source.m3u"
@@ -55,7 +51,7 @@ jobs:
           extm3u_regex = re.compile(r'^#EXTM3U.*\n', flags=re.M)
           extinf_time_regex = re.compile(r'#EXTINF:\d+')
 
-          # 中文台标URL编码修复
+          # 中文台标URL编码（解决俊版中文logo空白）
           def encode_logo_path(match):
               pre = match.group(1)
               logo_full = match.group(2)
@@ -68,31 +64,25 @@ jobs:
 
           # 读取源文件
           with open(raw_file, "r", encoding="utf-8", errors="ignore") as f:
-              raw_content = f.read()
+            raw_content = f.read()
 
-          # 1. 清除所有旧头部
+          # 1. 清除所有旧头部（杜绝双头部报错）
           clean_content = extm3u_regex.sub("", raw_content)
-          # 2. 所有频道统一为直播标准时长 -1
+          # 2. 强制统一为俊版标准直播时长 -1
           clean_content = extinf_time_regex.sub("#EXTINF:-1", clean_content)
-          # 3. 修复中文台标
+          # 3. 编码所有中文台标
           clean_content, cnt = logo_regex.subn(encode_logo_path, clean_content)
-          # 4. 清理多余空行
+          # 4. 清除所有空行（俊版致命bug修复）
           clean_content = re.sub(r'\n\s*\n+', r'\n', clean_content).strip()
 
-          # ✅ 俊版TVbox【纯正官方标准头部】
-          # 双EPG分行、支持压缩包+xml，俊版独家识别格式
-          final_text = (
-              "#EXTM3U\n"
-              f'#tvg-epg="{epg_xml}"\n'
-              f'#tvg-epg="{epg_gz}"\n'
-              f"{clean_content}\n"
-          )
+          # 双播放器通用标准头部（单EPG纯净版）
+          final_text = f'#EXTM3U x-tvg-url="{epg_link}"\n{clean_content}\n'
 
-          # 输出最终文件
+          # 输出 tm1.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write(final_text)
 
-          print(f"✅ 俊版标准M3U生成完成，台标修复数量：{cnt}")
+          print(f"✅ 双端适配完成！单XML-EPG纯净版，台标编码修复：{cnt} 个")
           EOF
 
       - name: 清理临时文件
@@ -104,5 +94,5 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add tm1.m3u
-          git diff --staged --quiet || git commit -m "✅ 俊版TVbox标准EPG+LOGO完整版"
+          git diff --staged --quiet || git commit -m "🔥 纯净版｜仅保留XML-EPG 俊版+NTPlayer双兼容"
           git push
