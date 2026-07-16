@@ -46,7 +46,7 @@ jobs:
           # 配置参数
           epg_link = "https://tvbox.aiga.cc/epg/epg.xml,https://tvbox.aiga.cc/epg/epg.gz"
           logo_base = "https://tvbox.aiga.cc/logo/"
-          out_name = "tv1.m3u"
+          out_name = "tm1.m3u"
           raw_file = "raw_source.m3u"
 
           # 正则匹配 tvg-logo="xxx"
@@ -80,7 +80,7 @@ jobs:
           # 拼接标准TVbox头部
           final_text = f'#EXTM3U x-tvg-url="{epg_link}"\n{fixed_content}'
 
-          # 输出到仓库根目录 tv.m3u
+          # 输出到仓库根目录 tm1.m3u
           with open(out_name, "w", encoding="utf-8") as fw:
               fw.write(final_text)
           print(f"处理完成，输出文件 {out_name}")
@@ -95,7 +95,7 @@ jobs:
           git config --local user.name "Github Actions Bot"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
-          git add tv.m3u
+          git add tm1.m3u
           # 仅判断暂存区有无修改，简化逻辑
           git diff --staged --quiet || git commit -m "Update iptv+epg+logo"
           git push
