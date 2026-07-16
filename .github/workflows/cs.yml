@@ -1,0 +1,101 @@
+name: iptv+epg+logo1
+permissions:
+  contents: write
+on:
+  # UTC 20点 = 北京时间4点
+  # UTC 3点 = 北京时间11点
+  schedule:
+    - cron: "0 20 * * *"
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+jobs:
+  make_m3u:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: Python环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: 清理残留临时文件
+        run: rm -f raw_source.m3u
+
+      - name: 下载原始M3U源（失败重试+空文件校验）
+        run: |
+          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+          echo "开始下载源文件 https://iptv.aiga.cc"
+          wget $WGET_ARGS -O raw_source.m3u https://iptv.aiga.cc || true
+          # 校验文件是否下载成功且非空
+          if [ ! -f "raw_source.m3u" ] || [ ! -s "raw_source.m3u" ]; then
+            echo "错误：源文件下载失败或为空，终止任务"
+            exit 1
+          fi
+          echo "源文件下载完成，文件大小: $(du -h raw_source.m3u)"
+
+      - name: 处理M3U：替换标准EPG头 + 中文台标URL编码
+        run: |
+          python3 << EOF
+          import os
+          import urllib.parse
+          import re
+
+          # 配置参数
+          epg_link = "https://tvbox.aiga.cc/epg/epg.xml,https://tvbox.aiga.cc/epg/epg.gz"
+          logo_base = "https://tvbox.aiga.cc/logo/"
+          out_name = "tv1.m3u"
+          raw_file = "raw_source.m3u"
+
+          # 正则匹配 tvg-logo="xxx"
+          logo_regex = re.compile(r'(tvg-logo=")([^"]+)(")')
+          # 匹配所有EXTM3U行，全局清除
+          extm3u_regex = re.compile(r'^#EXTM3U.*\n', flags=re.M)
+
+          def encode_logo_path(match):
+              pre = match.group(1)
+              logo_full = match.group(2)
+              suf = match.group(3)
+              # 仅处理当前域名台标，外部logo不改动
+              if logo_full.startswith(logo_base):
+                  file_name = logo_full[len(logo_base):]
+                  safe_name = urllib.parse.quote(file_name)
+                  new_logo = logo_base + safe_name
+                  return f"{pre}{new_logo}{suf}"
+              return match.group(0)
+
+          # 读取原始m3u全部内容
+          with open(raw_file, "r", encoding="utf-8", errors="ignore") as f:
+              raw_content = f.read()
+          print(f"原始文件读取完成，总行数：{len(raw_content.splitlines())}")
+
+          # 全局移除所有 #EXTM3U 头部行，解决空行前置残留问题
+          clean_content = extm3u_regex.sub("", raw_content)
+          # 批量编码所有中文台标链接
+          fixed_content, replace_count = logo_regex.subn(encode_logo_path, clean_content)
+          print(f"中文台标URL编码完成，共替换 {replace_count} 处台标链接")
+          
+          # 拼接标准TVbox头部
+          final_text = f'#EXTM3U x-tvg-url="{epg_link}"\n{fixed_content}'
+
+          # 输出到仓库根目录 tv.m3u
+          with open(out_name, "w", encoding="utf-8") as fw:
+              fw.write(final_text)
+          print(f"处理完成，输出文件 {out_name}")
+          EOF
+
+      - name: 清理临时文件
+        run: |
+          rm -f raw_source.m3u
+
+      - name: 提交推送更新
+        run: |
+          git config --local user.name "Github Actions Bot"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          git add tv.m3u
+          # 仅判断暂存区有无修改，简化逻辑
+          git diff --staged --quiet || git commit -m "Update iptv+epg+logo"
+          git push
