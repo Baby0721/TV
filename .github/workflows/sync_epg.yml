@@ -27,7 +27,7 @@ jobs:
           # 2. migu源
           wget $WGET_ARGS -O epg/migu.xml https://raw.githubusercontent.com/develop202/migu_video/refs/heads/main/playback.xml || true
           # 3. 51zmt源
-          wget $WGET_ARGS -O epg/51zmt.xml.gz http://epg.51zmt.top:8000/e.xml.gz || true
+          wget $WGET_ARGS -O epg/51zmt.xml.gz http://epg.51zmt.top:8000/e1.xml.gz || true
           # 4. zsdc源
           wget $WGET_ARGS -O epg/zsdc.xml https://epg.zsdc.eu.org/t.xml || true
           # 5. my源 新增
