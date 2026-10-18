@@ -18,12 +18,12 @@ jobs:
       - name: 批量下载直播源 & m3u转txt & 修复EPG链接
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          # 1. lemonTV.txt（已替换raw直链）
-          wget $WGET_ARGS -O live/lemonTV.txt https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u || true
+          # 1. lemonTV.m3u（已替换raw直链）
+          wget $WGET_ARGS -O live/lemonTV.m3u https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u || true
           # 2. vbskycn_ipv4.txt
           wget $WGET_ARGS -O live/vbskycn_ipv4.txt https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
-          # 3. aptv iptv.txt（替换为Kimentanm/aptv源）
-          wget $WGET_ARGS -O live/aptv.txt https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u || true
+          # 3. aptv iptv.m3u（替换为Kimentanm/aptv源）
+          wget $WGET_ARGS -O live/aptv.m3u https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u || true
           # 4. ioptu migu m3u 临时下载
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
           # 新增：my.m3u 下载到仓库根目录，不做格式转换
