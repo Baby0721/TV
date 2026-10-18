@@ -21,8 +21,8 @@ jobs:
       - name: 批量下载直播源 & m3u转txt & 修复EPG链接
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          # 1. develop202_migu.txt
-          wget $WGET_ARGS -O live/develop202_migu.txt https://raw.githubusercontent.com/develop202/migu_video/main/interfaceTXT.txt || true
+          # 1. lemonTV.txt
+          wget $WGET_ARGS -O live/lemonTV.txt https://github.com/jia070310/lemonTV/blob/main/iptv-fe.m3u || true
           # 2. vbskycn_ipv4.txt
           wget $WGET_ARGS -O live/vbskycn_ipv4.txt https://raw.githubusercontent.com/vbskycn/iptv/master/tv/iptv4.txt || true
           # 3. yuanzl77_live.txt
