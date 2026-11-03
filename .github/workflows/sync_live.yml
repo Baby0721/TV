@@ -3,37 +3,52 @@ permissions:
   contents: write
 on:
   schedule:
-    # 北京时间 03:00 10:00 每日统一执行 → UTC 19:00 02:00
+    # UTC 19:00 → 北京时间次日 03:00
     - cron: "0 19 * * *"
+    # UTC 02:00 → 北京时间 10:00
     - cron: "0 2 * * *"
   workflow_dispatch: # 支持手动运行
+
 jobs:
   sync_live:
     runs-on: ubuntu-latest
     steps:
       - name: 拉取仓库代码
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 完整拉取，避免浅克隆git异常
+
       - name: 创建live目录
         run: mkdir -p live
-      - name: 批量下载直播源 & m3u转txt & 修复EPG链接
+
+      - name: 批量下载直播源 & m3u转txt & 清理空文件
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
-          # 1. lemonTV.m3u（已替换raw直链）
+          # 1. lemonTV.m3u
           wget $WGET_ARGS -O live/lemonTV.m3u https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u || true
+          [ ! -s live/lemonTV.m3u ] && rm -f live/lemonTV.m3u
           # 2. vbskycn_ipv4.m3u
           wget $WGET_ARGS -O live/vbskycn_ipv4.m3u https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u || true
-          # 3. aptv iptv.m3u（替换为Kimentanm/aptv源）
+          [ ! -s live/vbskycn_ipv4.m3u ] && rm -f live/vbskycn_ipv4.m3u
+          # 3. aptv iptv.m3u
           wget $WGET_ARGS -O live/aptv.m3u https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u || true
-          # 4. ioptu migu m3u 临时下载
+          [ ! -s live/aptv.m3u ] && rm -f live/aptv.m3u
+          # 4. ioptu migu m3u
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
-          # 新增：my.m3u 下载到仓库根目录，不做格式转换
+          [ ! -s tmp_ioptu.m3u ] && rm -f tmp_ioptu.m3u
+          # my.m3u 根目录
           wget $WGET_ARGS -O my.m3u https://iptv.aiga.cc || true
-          # M3U 转 IPTV标准TXT格式（频道名,链接）
+          [ ! -s my.m3u ] && rm -f my.m3u
+
+          # M3U 转 TXT（频道名,url）
           python3 << EOF
           import re
           output = []
-          with open("tmp_ioptu.m3u","r",encoding="utf-8",errors="ignore") as f:
-              lines = f.readlines()
+          try:
+              with open("tmp_ioptu.m3u","r",encoding="utf-8",errors="ignore") as f:
+                  lines = f.readlines()
+          except Exception:
+              lines = []
           name = ""
           for line in lines:
               line = line.strip()
@@ -43,18 +58,23 @@ jobs:
                       name = match.group(1).strip()
               elif line and not line.startswith("#"):
                   output.append(f"{name},{line}")
-          # 输出带txt后缀
           with open("live/ioptu_migu.txt","w",encoding="utf-8") as f:
               f.write("\n".join(output))
           EOF
-          # 删除临时m3u文件
+          # 转换后判断txt是否为空，空就删掉
+          [ ! -s live/ioptu_migu.txt ] && rm -f live/ioptu_migu.txt
           rm -f tmp_ioptu.m3u
+
       - name: Git提交推送
         run: |
           git config --global user.name "Github Actions Bot"
           git config --global user.email "bot@github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add live/ my.m3u
-          # 无文件变更则跳过提交
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update sync_live"
-          git push
+          # 无变更跳过提交
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "✅ 没有文件变更，跳过提交"
+          else
+            git commit -m "Update sync_live"
+            git push
+          fi
