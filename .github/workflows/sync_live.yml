@@ -36,6 +36,9 @@ jobs:
           # 4. ioptu migu m3u
           wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
           [ ! -s tmp_ioptu.m3u ] && rm -f tmp_ioptu.m3u
+          # 5. buhanzhe webview.txt → live/ysp.txt
+          wget $WGET_ARGS -O live/ysp.txt https://github.com/buhanzhe/webSourceM3U8/releases/latest/download/webview.txt || true
+          [ ! -s live/ysp.txt ] && rm -f live/ysp.txt
           # my.m3u 根目录
           wget $WGET_ARGS -O my.m3u https://iptv.aiga.cc || true
           [ ! -s my.m3u ] && rm -f my.m3u
