@@ -1,4 +1,4 @@
-name: sync_live
+name: sync_live1
 permissions:
   contents: write
 on:
