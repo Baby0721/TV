@@ -24,24 +24,105 @@ jobs:
       - name: 批量下载直播源 & m3u转txt & 清理空文件
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+
           # 1. lemonTV.m3u
-          wget $WGET_ARGS -O live/lemonTV.m3u https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u || true
-          [ ! -s live/lemonTV.m3u ] && rm -f live/lemonTV.m3u
+          if wget $WGET_ARGS -O live/lemonTV.m3u.tmp https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u; then
+            mv live/lemonTV.m3u.tmp live/lemonTV.m3u
+          else
+            rm -f live/lemonTV.m3u.tmp
+            echo "⚠️ lemonTV.m3u 下载失败，保留原有文件"
+          fi
+
           # 2. vbskycn_ipv4.m3u
-          wget $WGET_ARGS -O live/vbskycn_ipv4.m3u https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u || true
-          [ ! -s live/vbskycn_ipv4.m3u ] && rm -f live/vbskycn_ipv4.m3u
+          if wget $WGET_ARGS -O live/vbskycn_ipv4.m3u.tmp https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u; then
+            mv live/vbskycn_ipv4.m3u.tmp live/vbskycn_ipv4.m3u
+          else
+            rm -f live/vbskycn_ipv4.m3u.tmp
+            echo "⚠️ vbskycn_ipv4.m3u 下载失败，保留原有文件"
+          fi
+
           # 3. aptv iptv.m3u
-          wget $WGET_ARGS -O live/aptv.m3u https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u || true
-          [ ! -s live/aptv.m3u ] && rm -f live/aptv.m3u
+          if wget $WGET_ARGS -O live/aptv.m3u.tmp https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u; then
+            mv live/aptv.m3u.tmp live/aptv.m3u
+          else
+            rm -f live/aptv.m3u.tmp
+            echo "⚠️ aptv.m3u 下载失败，保留原有文件"
+          fi
+
           # 4. ioptu migu m3u
-          wget $WGET_ARGS -O tmp_ioptu.m3u https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u || true
-          [ ! -s tmp_ioptu.m3u ] && rm -f tmp_ioptu.m3u
+          if wget $WGET_ARGS -O tmp_ioptu.m3u.tmp https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u; then
+            mv tmp_ioptu.m3u.tmp tmp_ioptu.m3u
+          else
+            rm -f tmp_ioptu.m3u.tmp
+            echo "⚠️ tmp_ioptu.m3u 下载失败，保留原有文件"
+          fi
+
           # 5. buhanzhe webview.txt → live/ysp.txt
-          wget $WGET_ARGS -O live/ysp.txt https://github.com/buhanzhe/webSourceM3U8/releases/latest/download/webview.txt || true
-          [ ! -s live/ysp.txt ] && rm -f live/ysp.txt
+          if wget $WGET_ARGS -O live/ysp.txt.tmp https://github.com/buhanzhe/webSourceM3U8/releases/latest/download/webview.txt; then
+            mv live/ysp.txt.tmp live/ysp.txt
+          else
+            rm -f live/ysp.txt.tmp
+            echo "⚠️ webview.txt 下载失败，保留原有 ysp.txt"
+          fi
+
+          # 判断不存在 #genre#FM收音机 才追加，防止多次运行重复叠加
+          if ! grep -q "^#genre#FM收音机" live/ysp.txt 2>/dev/null; then
+            cat >> live/ysp.txt <<'EOF'
+#genre#FM收音机
+103.8,http://ls.qingting.fm/live/4945.m3u8?bitrate=64
+500首华语经典,http://ls.qingting.fm/live/3412131.m3u8?bitrate=64
+怀集音乐台,http://live.xmcdn.com:80/live/966/64.m3u8
+高清音乐台,http://live.xmcdn.com:80/live/1427/64.m3u8
+清晨音乐台,http://live.xmcdn.com:80/live/1011/64.m3u8
+老歌音乐台,http://live.xmcdn.com:80/live/2628/64.m3u8
+亚洲经典音乐台,http://live.xmcdn.com:80/live/1005/64.m3u8
+萤火虫电台,http://live.xmcdn.com:80/live/1006/64.m3u8
+卷卷猫讲故事,http://live.xmcdn.com:80/live/2690/64.m3u8
+厦门音乐广播,http://ls.qingting.fm/live/1739.m3u8
+浙江动听,http://ls.qingting.fm/live/4866.m3u8
+四川岷江音乐广播,http://ls.qingting.fm/live/1110.m3u8
+广东音乐广播,http://ls.qingting.fm/live/1260.m3u8
+深圳飞扬音乐台,http://ls.qingting.fm/live/1271.m3u8
+
+北京新闻广播,http://ls.qingting.fm/live/339.m3u8?bitrate=64
+北京文艺广播,http://ls.qingting.fm/live/333.m3u8
+北京MetroRadio,http://audiolive.rbc.cn:1935/live/fm945/96K/tzwj_video.m3u8
+北京城市广播·副中心之声,http://audiolive.rbc.cn:1935/live/fm1073/96K/tzwj_video.m3u8
+北京房山经典音乐,http://live.xmcdn.com/live/963/64.m3u8
+北京房山电台,http://live.funhillrm.com/3/sd/live.m3u8
+北京好音乐,http://ls.qingting.fm/live/2131011.m3u8
+北京经典,http://live.funhillrm.com/4/sd/live.m3u8
+北京音乐广播,http://live.xmcdn.com/live/95/64.m3u8
+
+CNR 经典音乐,http://ngcdn004.cnr.cn/live/dszs/index.m3u8
+CNR 音乐之声,http://ngcdn003.cnr.cn/live/yyzs/index.m3u8
+CNR 中国之声,http://ngcdn001.cnr.cn/live/zgzs/index.m3u8
+
+CRI 环球资讯广播 FM90.5,http://sk.cri.cn/905.m3u8
+CRI 中文环球广播,http://sk.cri.cn/hyhq.m3u8
+CRI 南海之声,http://sk.cri.cn/nhzs.m3u8
+CRI Hit FM FM88.7,http://sk.cri.cn/887.m3u8
+CRI 轻松调频 FM91.5,http://sk.cri.cn/915.m3u8
+CRI NEWS Plus AM846,http://sk.cri.cn/am846.m3u8
+
+中广流行网,http://stream.rcs.revma.com/aw9uqyxy2tzuv
+中广新闻网,http://stream.rcs.revma.com/78fm9wyy2tzuv
+中广音乐网,http://stream.rcs.revma.com/ks4vsmg3qtzuv
+
+中央中国乡村之声,http://ngcdn017.cnr.cn/live/xczs/index.m3u8
+中央ChinaPlus,http://sk.cri.cn/am846.m3u8
+中央英语曼听,http://sk.cri.cn/915.m3u8
+中央海峡飞虹,http://sk.cri.cn/hxfh.m3u8
+EOF
+          fi
+
           # my.m3u 根目录
-          wget $WGET_ARGS -O my.m3u https://iptv.aiga.cc || true
-          [ ! -s my.m3u ] && rm -f my.m3u
+          if wget $WGET_ARGS -O my.m3u.tmp https://iptv.aiga.cc; then
+            mv my.m3u.tmp my.m3u
+          else
+            rm -f my.m3u.tmp
+            echo "⚠️ my.m3u 下载失败，保留原有文件"
+          fi
 
           # M3U 转 TXT（频道名,url）
           python3 << EOF
