@@ -25,7 +25,7 @@ jobs:
         run: |
           WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
 
-          # 函数：下载成功才覆盖；失败保留旧文件，不删除
+          # ========== 下载函数：成功且文件非空才覆盖，失败保留旧文件 ==========
           safe_wget() {
             local url="$1"
             local dst="$2"
@@ -53,9 +53,10 @@ jobs:
           # my.m3u 根目录
           safe_wget "https://iptv.aiga.cc" "my.m3u"
 
-          # 判断不存在 #genre#FM收音机 才追加，防止重复叠加
-          if ! grep -q "^#genre#FM收音机" live/ysp.txt 2>/dev/null; then
-            cat >> live/ysp.txt <<'EOF'
+          # ========== 加固：先判断文件存在，再grep，防止ysp.txt不存在直接报错 ==========
+          if [ -f live/ysp.txt ]; then
+            if ! grep -q "^#genre#FM收音机" live/ysp.txt; then
+              cat >> live/ysp.txt <<'EOF'
 #genre#FM收音机
 103.8,http://ls.qingting.fm/live/4945.m3u8?bitrate=64
 500首华语经典,http://ls.qingting.fm/live/3412131.m3u8?bitrate=64
@@ -102,6 +103,9 @@ CRI NEWS Plus AM846,http://sk.cri.cn/am846.m3u8
 中央英语曼听,http://sk.cri.cn/915.m3u8
 中央海峡飞虹,http://sk.cri.cn/hxfh.m3u8
 EOF
+            fi
+          else
+            echo "⚠️ ysp.txt 不存在，跳过FM追加"
           fi
 
           # M3U 转 TXT（频道名,url）
