@@ -7,7 +7,7 @@ on:
     - cron: "0 19 * * *"
     # UTC 02:00 → 北京时间 10:00
     - cron: "0 2 * * *"
-  workflow_dispatch: # 支持手动运行
+  workflow_dispatch:
 
 jobs:
   sync_live:
@@ -16,56 +16,44 @@ jobs:
       - name: 拉取仓库代码
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 完整拉取，避免浅克隆git异常
+          fetch-depth: 0
 
       - name: 创建live目录
         run: mkdir -p live
 
-      - name: 批量下载直播源 & m3u转txt & 清理空文件
+      - name: 批量下载直播源 & m3u转txt
         run: |
-          WGET_ARGS="--timeout=15 --retry-connrefused --tries=3 --no-check-certificate"
+          CURL_ARGS="--connect-timeout 15 --max-time 20 --retry 3 --insecure -L"
+
+          # 函数：下载，成功才覆盖，失败保留旧文件，不中断脚本
+          safe_download() {
+            local url="$1"
+            local dst="$2"
+            local tmp="${dst}.tmp"
+            curl $CURL_ARGS -o "$tmp" "$url"
+            if [ $? -eq 0 ] && [ -s "$tmp" ]; then
+              mv "$tmp" "$dst"
+              echo "✅ $dst 下载成功"
+            else
+              rm -f "$tmp"
+              echo "⚠️ $dst 下载失败，保留原有文件"
+            fi
+          }
 
           # 1. lemonTV.m3u
-          if wget $WGET_ARGS -O live/lemonTV.m3u.tmp https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u; then
-            mv live/lemonTV.m3u.tmp live/lemonTV.m3u
-          else
-            rm -f live/lemonTV.m3u.tmp
-            echo "⚠️ lemonTV.m3u 下载失败，保留原有文件"
-          fi
-
+          safe_download "https://raw.githubusercontent.com/jia070310/lemonTV/refs/heads/main/iptv-fe.m3u" "live/lemonTV.m3u"
           # 2. vbskycn_ipv4.m3u
-          if wget $WGET_ARGS -O live/vbskycn_ipv4.m3u.tmp https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u; then
-            mv live/vbskycn_ipv4.m3u.tmp live/vbskycn_ipv4.m3u
-          else
-            rm -f live/vbskycn_ipv4.m3u.tmp
-            echo "⚠️ vbskycn_ipv4.m3u 下载失败，保留原有文件"
-          fi
+          safe_download "https://raw.githubusercontent.com/vbskycn/iptv/refs/heads/master/tv/iptv4.m3u" "live/vbskycn_ipv4.m3u"
+          # 3. aptv.m3u
+          safe_download "https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u" "live/aptv.m3u"
+          # 4. tmp_ioptu.m3u
+          safe_download "https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u" "tmp_ioptu.m3u"
+          # 5. ysp.txt
+          safe_download "https://github.com/buhanzhe/webSourceM3U8/releases/latest/download/webview.txt" "live/ysp.txt"
+          # my.m3u
+          safe_download "https://iptv.aiga.cc" "my.m3u"
 
-          # 3. aptv iptv.m3u
-          if wget $WGET_ARGS -O live/aptv.m3u.tmp https://raw.githubusercontent.com/Kimentanm/aptv/refs/heads/master/m3u/iptv.m3u; then
-            mv live/aptv.m3u.tmp live/aptv.m3u
-          else
-            rm -f live/aptv.m3u.tmp
-            echo "⚠️ aptv.m3u 下载失败，保留原有文件"
-          fi
-
-          # 4. ioptu migu m3u
-          if wget $WGET_ARGS -O tmp_ioptu.m3u.tmp https://raw.githubusercontent.com/ioptu/migu_video/main/migu.m3u; then
-            mv tmp_ioptu.m3u.tmp tmp_ioptu.m3u
-          else
-            rm -f tmp_ioptu.m3u.tmp
-            echo "⚠️ tmp_ioptu.m3u 下载失败，保留原有文件"
-          fi
-
-          # 5. buhanzhe webview.txt → live/ysp.txt
-          if wget $WGET_ARGS -O live/ysp.txt.tmp https://github.com/buhanzhe/webSourceM3U8/releases/latest/download/webview.txt; then
-            mv live/ysp.txt.tmp live/ysp.txt
-          else
-            rm -f live/ysp.txt.tmp
-            echo "⚠️ webview.txt 下载失败，保留原有 ysp.txt"
-          fi
-
-          # 判断不存在 #genre#FM收音机 才追加，防止多次运行重复叠加
+          # 判断不存在 #genre#FM收音机 才追加，防重复
           if ! grep -q "^#genre#FM收音机" live/ysp.txt 2>/dev/null; then
             cat >> live/ysp.txt <<'EOF'
 #genre#FM收音机
@@ -116,15 +104,7 @@ CRI NEWS Plus AM846,http://sk.cri.cn/am846.m3u8
 EOF
           fi
 
-          # my.m3u 根目录
-          if wget $WGET_ARGS -O my.m3u.tmp https://iptv.aiga.cc; then
-            mv my.m3u.tmp my.m3u
-          else
-            rm -f my.m3u.tmp
-            echo "⚠️ my.m3u 下载失败，保留原有文件"
-          fi
-
-          # M3U 转 TXT（频道名,url）
+          # M3U 转 TXT
           python3 << EOF
           import re
           output = []
@@ -145,7 +125,6 @@ EOF
           with open("live/ioptu_migu.txt","w",encoding="utf-8") as f:
               f.write("\n".join(output))
           EOF
-          # 转换后判断txt是否为空，空就删掉
           [ ! -s live/ioptu_migu.txt ] && rm -f live/ioptu_migu.txt
           rm -f tmp_ioptu.m3u
 
@@ -155,9 +134,8 @@ EOF
           git config --global user.email "bot@github.com"
           git remote set-url origin https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
           git add live/ my.m3u
-          # 无变更跳过提交
           if git diff --quiet && git diff --staged --quiet; then
-            echo "✅ 没有文件变更，跳过提交"
+            echo "✅ 无变更，跳过提交"
           else
             git commit -m "Update sync_live"
             git push
