@@ -35,6 +35,8 @@ http://101.35.240.114:88/live.php?id=CCTV10
 #EXTINF:-1 tvg-id="CCTV-11" tvg-name="CCTV-11" tvg-logo="https://www.xn--rgv465a.top/tvlogo/CCTV-11.png" group-title="央视频道",CCTV-11
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=CCTV11
+#EXTINF:-1 tvg-id="CCTV-12" tvg-name="CCTV-12" tvg-logo="https://tb.zbds.top/logo/CCTV12.png" group-title="央视频道",CCTV-12
+http://124.165.251.82:85/tsfile/live/0012_1.m3u8?key=txiptv&playlive=1&authid=0
 #EXTINF:-1 tvg-id="CCTV-12" tvg-name="CCTV-12" tvg-logo="https://www.xn--rgv465a.top/tvlogo/CCTV-12.png" group-title="央视频道",CCTV-12
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=CCTV12
@@ -83,8 +85,8 @@ http://101.35.240.114:88/live.php?id=湖南卫视
 #EXTINF:-1 tvg-id="湖南卫视" tvg-name="湖南卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/湖南卫视.png" group-title="卫视频道",湖南卫视
 #EXTVLCOPT:http-user-agent=aliplayer
 http://101.35.240.114:88/live.php?id=湖南卫视4K
-#EXTINF:-1 tvg-id="浙江卫视" tvg-name="浙江卫视" tvg-logo="https://tb.zbds.top/logo/浙江卫视.png" group-title="卫视频道",浙江卫视
-https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8?
+#EXTINF:-1 tvg-id="浙江卫视" tvg-name="浙江卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/浙江卫视.png" group-title="卫视频道",浙江卫视
+https://ali-m-l.cztv.com/channels/lantian/channel001/1080p.m3u8
 #EXTINF:-1 tvg-id="浙江卫视" tvg-name="浙江卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/浙江卫视.png" group-title="卫视频道",浙江卫视
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=浙江卫视
@@ -135,7 +137,7 @@ http://101.35.240.114:88/live.php?id=重庆卫视
 #EXTVLCOPT:http-referer=https://www.ahtv.cn/
 http://101.35.240.114:88/live.php?id=安徽卫视
 #EXTINF:-1 tvg-id="四川卫视" tvg-name="四川卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/四川卫视.png" group-title="卫视频道",四川卫视
-https://live.264788.xyz/channel/sichuanweishi4k?streamid=401bf692a1a8b91298f26077d53316d6&livekey=01WgOR41rriMmMkzNsd0UoaxJRwetZdxIvtVk
+https://live.264788.xyz/channel/sichuanweishi4k?streamid=21be5901ee81559c827dc84e46f26452&livekey=01WgOR41rriMmMkzNsd0UoaxJRwetZdxIvtVk
 #EXTINF:-1 tvg-id="四川卫视" tvg-name="四川卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/四川卫视.png" group-title="卫视频道",四川卫视
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=四川卫视
@@ -182,14 +184,14 @@ http://101.35.240.114:88/live.php?id=甘肃卫视
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=青海卫视
 #EXTINF:-1 tvg-id="宁夏卫视" tvg-name="宁夏卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/宁夏卫视.png" group-title="卫视频道",宁夏卫视
-https://live.264788.xyz/channel/ningxiaweishi?streamid=e1236348f815c36a0429357e5b5c5f10&livekey=01WgOR41rriMmMkzNsd0UoaxJRwetZdxIvtVk
+https://live.264788.xyz/channel/ningxiaweishi?streamid=551474d02bee1c160e1692e22c45ddba&livekey=01WgOR41rriMmMkzNsd0UoaxJRwetZdxIvtVk
 #EXTINF:-1 tvg-id="内蒙古卫视" tvg-name="内蒙古卫视" tvg-logo="https://i.imgur.com/WeugJBE.png" group-title="卫视频道",内蒙古卫视
 http://play1-qk.nmtv.cn/live/1769652018126032.m3u8
 #EXTINF:-1 tvg-id="内蒙古卫视" tvg-name="内蒙古卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/内蒙古卫视.png" group-title="卫视频道",内蒙古卫视
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=内蒙古卫视
-#EXTINF:-1 tvg-id="新疆卫视" tvg-name="新疆卫视" tvg-logo="https://tb.zbds.top/logo/新疆卫视.png" group-title="卫视频道",新疆卫视
-http://218.84.12.186:8001/hls/main/playlist.m3u8?zxinjd;http://218.84.12.186:8001/hls/main/playlist.m3u8zxinjd
+#EXTINF:-1 tvg-id="新疆卫视" tvg-name="新疆卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/新疆卫视.png" group-title="卫视频道",新疆卫视
+https://live.264788.xyz/channel/xinjiangweishi?streamid=4f481f56ae39ce5d24203471de9df635&livekey=01WgOR41rriMmMkzNsd0UoaxJRwetZdxIvtVk
 #EXTINF:-1 tvg-id="新疆卫视" tvg-name="新疆卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/新疆卫视.png" group-title="卫视频道",新疆卫视
 #EXTVLCOPT:http-user-agent=AptvPlayer-UA
 http://101.35.240.114:88/live.php?id=新疆卫视
@@ -211,8 +213,8 @@ http://120.220.76.91:2003/difangtai/jilin.php?id=jlsh
 https://satellitepull.cnr.cn/live/wxjlxcgb/playlist.m3u8
 #EXTINF:-1 tvg-id="吉林文化" tvg-name="吉林文化" tvg-logo="https://www.xn--rgv465a.top/tvlogo/吉林文化.png" group-title="吉林地方",吉林文化
 http://120.220.76.91:2003/difangtai/jilin.php?id=jlzywh
-#EXTINF:-1 tvg-id="延边卫视" tvg-name="延边卫视" tvg-logo="https://livecdn.zbds.org/logo/延边卫视.png" group-title="吉林地方",延边卫视
-http://l.cztvcloud.com/channels/lantian/SXxinchang2/720p.m3u8#
+#EXTINF:-1 tvg-id="延边卫视" tvg-name="延边卫视" tvg-logo="https://www.xn--rgv465a.top/tvlogo/延边卫视.png" group-title="吉林地方",延边卫视
+https://srs.iyb983.cn/video/CYS/index.m3u8
 #EXTINF:-1 tvg-id="103.8" tvg-name="103.8" tvg-logo="https://www.xn--rgv465a.top/tvlogo/103.8.png" group-title="FM收音机",103.8
 http://ls.qingting.fm/live/4945.m3u8?bitrate=64
 #EXTINF:-1 tvg-id="500首华语经典" tvg-name="500首华语经典" tvg-logo="https://www.xn--rgv465a.top/tvlogo/500首华语经典.png" group-title="FM收音机",500首华语经典
